@@ -41,7 +41,8 @@ public class DownloadHandler implements HttpHandler {
 					if (encryption.checkPassword(password, objectList.get(0).getString("password"))) {
 						List<String> videoList = objectList.get(0).getList("videos");
 						if (videoList != null && videoList.contains(requestedVideo)) {
-							serverData.writeFile(httpExchange, new File(Main.configLoader.getString("filePath") + "sample.mp4"));
+							// Add support for file types
+							serverData.writeFile(httpExchange, new File(Main.configLoader.getString("filePath") + requestedVideo));
 						} else {
 							serverData.writeResponse(httpExchange, serverData.returnData(false, "7", "Not authorized to download"));
 						}
