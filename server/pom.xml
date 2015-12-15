@@ -32,5 +32,10 @@
   		<artifactId>parse4j</artifactId>
   		<version>1.4</version>
   	</dependency>
+  	<dependency>
+		<groupId>org.jasypt</groupId>
+		<artifactId>jasypt</artifactId>
+		<version>1.9.2</version>
+	</dependency>
   </dependencies>
 </project>
