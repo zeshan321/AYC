@@ -18,9 +18,9 @@ import com.zeshanaslam.aycserver.Main;
 
 public class TLSHandler {
 
-	public HttpsConfigurator createSSLContext() throws NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
+	public HttpsConfigurator createTLSContext() throws NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
 		ConfigLoader configLoader = Main.configLoader;
-		
+
 		char[] ksPassword = configLoader.getString("ksPassword").toCharArray();
 		char[] ctPassword = configLoader.getString("ctPassword").toCharArray();
 

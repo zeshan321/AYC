@@ -29,7 +29,7 @@ public class ServerData {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void writeFile(HttpExchange t, File response) {
 		try {
 			t.sendResponseHeaders(200, response.length());
@@ -76,7 +76,7 @@ public class ServerData {
 
 		return data;
 	}
-	
+
 	public String returnData(boolean status, JSONArray array) {
 		JSONObject jsonObject = null;
 		String data = null;

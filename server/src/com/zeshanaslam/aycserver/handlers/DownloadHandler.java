@@ -26,7 +26,7 @@ public class DownloadHandler implements HttpHandler {
 		final Encryption encryption = new Encryption();
 		final String username = params.get("user").toLowerCase(), password = params.get("pass");
 		final String requestedVideo = params.get("fileid");
-		
+
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
 		query.whereEqualTo("username", username);
 		query.findInBackground(new FindCallback<ParseObject>() {
@@ -41,10 +41,9 @@ public class DownloadHandler implements HttpHandler {
 					if (encryption.checkPassword(password, objectList.get(0).getString("password"))) {
 						List<String> videoList = objectList.get(0).getList("videos");
 						if (videoList != null && videoList.contains(requestedVideo)) {
-							// Add support for file types
-							serverData.writeFile(httpExchange, new File(Main.configLoader.getString("filePath") + requestedVideo));
+							serverData.writeFile(httpExchange, new File(Main.configLoader.getString("filePath") + requestedVideo + Main.configLoader.getString("fileEx") ));
 						} else {
-							serverData.writeResponse(httpExchange, serverData.returnData(false, "7", "Not authorized to download"));
+							serverData.writeResponse(httpExchange, serverData.returnData(false, "7", "Not authorized to view this page"));
 						}
 					} else {
 						serverData.writeResponse(httpExchange, serverData.returnData(false, "6", "Invalid password"));

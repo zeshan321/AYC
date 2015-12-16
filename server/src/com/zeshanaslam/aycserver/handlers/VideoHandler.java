@@ -20,9 +20,9 @@ public class VideoHandler implements HttpHandler {
 	@Override
 	public void handle(final HttpExchange httpExchange) throws IOException {
 		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
-		
+
 		final ServerData serverData = new ServerData();
-		
+
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Videos");
 		query.whereEqualTo("section", params.get("section"));
 		query.findInBackground(new FindCallback<ParseObject>() {
@@ -33,22 +33,22 @@ public class VideoHandler implements HttpHandler {
 						serverData.writeResponse(httpExchange, serverData.returnData(true, null, "No videos found"));
 						return;
 					}
-					
+
 					JSONArray jsonArray = new JSONArray();
-					
+
 					for (ParseObject parseObject: objectList) {						
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("name", parseObject.getString("name"));
 						jsonObject.put("desc", parseObject.getString("desc"));
 						jsonObject.put("fileid", parseObject.getString("fileid"));
-						
+
 						jsonArray.put(jsonObject);
 					}
-					
+
 					serverData.writeResponse(httpExchange, serverData.returnData(true, jsonArray));
-		        } else {
-		        	serverData.writeResponse(httpExchange, serverData.returnData(false, "4", "Failed to retrieve videos"));
-		        }
+				} else {
+					serverData.writeResponse(httpExchange, serverData.returnData(false, "4", "Failed to retrieve videos"));
+				}
 			}
 		});
 	}

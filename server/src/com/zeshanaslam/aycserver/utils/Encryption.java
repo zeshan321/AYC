@@ -12,7 +12,7 @@ public class Encryption {
 
 	public boolean checkPassword(String input, String data) {
 		StrongPasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
-		
+
 		return passwordEncryptor.checkPassword(input, data);
 	}
 }

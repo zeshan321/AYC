@@ -18,7 +18,7 @@ public class SectionHandler implements HttpHandler {
 	@Override
 	public void handle(final HttpExchange httpExchange) throws IOException {
 		final ServerData serverData = new ServerData();
-		
+
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Sections");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
@@ -28,17 +28,17 @@ public class SectionHandler implements HttpHandler {
 						serverData.writeResponse(httpExchange, serverData.returnData(true, null, "No sections found"));
 						return;
 					}
-					
+
 					JSONArray jsonArray = new JSONArray();
-					
+
 					for (ParseObject parseObject: objectList) {						
 						jsonArray.put(parseObject.getString("name"));
 					}
-					
+
 					serverData.writeResponse(httpExchange, serverData.returnData(true, jsonArray));
-		        } else {
-		        	serverData.writeResponse(httpExchange, serverData.returnData(false, "3", "Failed to retrieve sections"));
-		        }
+				} else {
+					serverData.writeResponse(httpExchange, serverData.returnData(false, "3", "Failed to retrieve sections"));
+				}
 			}
 		});
 	}
