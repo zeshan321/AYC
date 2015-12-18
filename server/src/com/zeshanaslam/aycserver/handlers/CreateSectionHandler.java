@@ -22,7 +22,7 @@ public class CreateSectionHandler implements HttpHandler {
 		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
 		
 		final ServerData serverData = new ServerData();
-		final String key = params.get("key"), name = params.get("name");
+		final String key = params.get("key"), name = params.get("name"), year = params.get("year");
 		
 		if (key.equals(Main.configLoader.getString("editKey"))) {
 			
@@ -32,9 +32,13 @@ public class CreateSectionHandler implements HttpHandler {
 				@Override
 				public void done(List<ParseObject> objectList, ParseException e) {
 					if (e == null) {
+						ParseObject userData = null;
+						
 						if (objectList == null) {
-							ParseObject userData = new ParseObject("Sections");
+							userData = new ParseObject("Sections");
+							
 							userData.put("name", name);
+							userData.put("year", year);
 							userData.saveInBackground(new SaveCallback() {
 
 								@Override
@@ -50,7 +54,22 @@ public class CreateSectionHandler implements HttpHandler {
 							return;
 						}
 						
-						serverData.writeResponse(httpExchange, serverData.returnData(false, "10", "Create already exists"));
+						userData = objectList.get(0);
+						
+						userData.put("name", name);
+						userData.put("year", year);
+						userData.saveInBackground(new SaveCallback() {
+
+							@Override
+							public void done(ParseException e) {
+								if (e == null) {
+									serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Section successfully created"));
+								} else {
+									serverData.writeResponse(httpExchange, serverData.returnData(false, "9", "Unable to create"));
+								}
+							}
+
+						});
 					} else {
 						e.printStackTrace();
 					}

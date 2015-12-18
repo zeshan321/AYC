@@ -20,24 +20,27 @@ public class CreateVideoHandler implements HttpHandler {
 	@Override
 	public void handle(final HttpExchange httpExchange) throws IOException {
 		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
-		
+
 		final ServerData serverData = new ServerData();
-		final String key = params.get("key"), title = params.get("title"), desc = params.get("desc"), fileid = params.get("fileid"), section = params.get("section");
-		
+		final String key = params.get("key"), title = params.get("title"), desc = params.get("desc"), fileid = params.get("fileid"), section = params.get("section"), year = params.get("year");
+
 		if (key.equals(Main.configLoader.getString("editKey"))) {
-			
+
 			ParseQuery<ParseObject> query = ParseQuery.getQuery("Videos");
 			query.whereEqualTo("fileid", fileid);
 			query.findInBackground(new FindCallback<ParseObject>() {
 				@Override
 				public void done(List<ParseObject> objectList, ParseException e) {
 					if (e == null) {
+						ParseObject userData = null;
 						if (objectList == null) {
-							ParseObject userData = new ParseObject("Videos");
+							userData = new ParseObject("Videos");
+
 							userData.put("name", title);
 							userData.put("desc", desc);
 							userData.put("fileid", fileid);
 							userData.put("section", section);
+							userData.put("year", year);
 							userData.saveInBackground(new SaveCallback() {
 
 								@Override
@@ -53,7 +56,25 @@ public class CreateVideoHandler implements HttpHandler {
 							return;
 						}
 						
-						serverData.writeResponse(httpExchange, serverData.returnData(false, "10", "Create already exists"));
+						userData = objectList.get(0);
+
+						userData.put("name", title);
+						userData.put("desc", desc);
+						userData.put("fileid", fileid);
+						userData.put("section", section);
+						userData.put("year", year);
+						userData.saveInBackground(new SaveCallback() {
+
+							@Override
+							public void done(ParseException e) {
+								if (e == null) {
+									serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Video successfully updated"));
+								} else {
+									serverData.writeResponse(httpExchange, serverData.returnData(false, "9", "Unable to update create"));
+								}
+							}
+
+						});					
 					} else {
 						e.printStackTrace();
 					}

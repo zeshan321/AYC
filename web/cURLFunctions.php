@@ -24,14 +24,14 @@ function httpGet($url)
 
 /* Example:
 
-foreach(getSections() as $value) {
+foreach(getSections("2015") as $value) {
 	echo $value;
 }*/
 
-function getSections() {
+function getSections($year) {
 	global $serverURL;
 
-	$response = httpGet($serverURL . "/section");
+	$response = httpGet($serverURL . "/section?year=" . $year);
 
 	$json = (array) json_decode($response, true);
 	
@@ -40,17 +40,19 @@ function getSections() {
 
 /* Example:
 
-foreach(getVideos("Section 1") as $value) {
+foreach(getVideos("Section 1", "2015") as $value) {
 	echo $value["name"] . "<br>";
 	echo $value["desc"] . "<br>";
 	echo $value["fileid"] . "<br>";
-}*/
-function getVideos($section) {
+	echo $value["year"] . "<br>";
+} */
+
+function getVideos($section, $year) {
 	global $serverURL;
 	
 	$section = str_replace(" ", "%20", $section);
 	
-	$response = httpGet($serverURL . "/videos?section=" . $section);
+	$response = httpGet($serverURL . "/videos?section=" . $section . "&year=" . $year);
 
 	$json = (array) json_decode($response, true);
 	
@@ -59,22 +61,23 @@ function getVideos($section) {
 
 /* Returns true or false if section has been created successfully */
 
-function createSection($section) {
+function createSection($section, $year) {
 	global $serverURL;
 	global $editKey;
 	
 	$section = str_replace(" ", "%20", $section);
 	
-	$response = httpGet($serverURL . "/createsection?key=" . $editKey . "&name=" . $section);
+	$response = httpGet($serverURL . "/createsection?key=" . $editKey . "&name=" . $section . "&year=" . $year);
 
 	$json = (array) json_decode($response, false);
 	
 	return $json["succeed"];
 }
 
+
 /* Returns true or false if video has been created successfully */
 
-function createVideo($title, $desc, $fileid, $section) {
+function createVideo($title, $desc, $fileid, $section, $year) {
 	global $serverURL;
 	global $editKey;
 	
@@ -82,7 +85,7 @@ function createVideo($title, $desc, $fileid, $section) {
 	$desc = str_replace(" ", "%20", $desc);
 	$section = str_replace(" ", "%20", $section);
 	
-	$response = httpGet($serverURL . "/createvideo?key=" . $editKey . "&title=" . $title . "&desc=" . $desc . "&section=" . $section . "&fileid=" . $fileid);
+	$response = httpGet($serverURL . "/createvideo?key=" . $editKey . "&title=" . $title . "&desc=" . $desc . "&section=" . $section . "&fileid=" . $fileid . "&year=" . $year);
 
 	$json = (array) json_decode($response, false);
 	

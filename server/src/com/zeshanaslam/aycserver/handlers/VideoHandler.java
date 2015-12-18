@@ -25,6 +25,7 @@ public class VideoHandler implements HttpHandler {
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Videos");
 		query.whereEqualTo("section", params.get("section"));
+		query.whereEqualTo("year", params.get("year"));
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> objectList, ParseException e) {
@@ -41,6 +42,7 @@ public class VideoHandler implements HttpHandler {
 						jsonObject.put("name", parseObject.getString("name"));
 						jsonObject.put("desc", parseObject.getString("desc"));
 						jsonObject.put("fileid", parseObject.getString("fileid"));
+						jsonObject.put("year", parseObject.getString("year"));
 
 						jsonArray.put(jsonObject);
 					}

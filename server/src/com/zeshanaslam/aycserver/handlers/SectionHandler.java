@@ -2,6 +2,7 @@ package com.zeshanaslam.aycserver.handlers;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.parse4j.ParseException;
@@ -17,9 +18,12 @@ public class SectionHandler implements HttpHandler {
 
 	@Override
 	public void handle(final HttpExchange httpExchange) throws IOException {
+		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
+
 		final ServerData serverData = new ServerData();
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Sections");
+		query.whereEqualTo("year", params.get("year"));
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> objectList, ParseException e) {
