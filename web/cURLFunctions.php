@@ -35,7 +35,7 @@ function getSections($year) {
 
 	$json = (array) json_decode($response, true);
 	
-	return $json['info'];
+	return $json["info"];
 }
 
 /* Example:
@@ -56,7 +56,7 @@ function getVideos($section, $year) {
 
 	$json = (array) json_decode($response, true);
 	
-	return $json['info'];
+	return $json["info"];
 }
 
 /* Returns true or false if section has been created successfully */
@@ -90,6 +90,21 @@ function createVideo($title, $desc, $fileid, $section, $year) {
 	$json = (array) json_decode($response, false);
 	
 	return $json["succeed"];
+}
+
+/* Returns json array from login 
+foreach(login("zeshan", "aslam") as $value) {
+	echo $value["admin"] . "<br>";
+}
+*/
+function login($user, $pass) {
+	global $serverURL;
+	
+	$response = httpGet($serverURL . "/login?user=" . $user . "&pass=" . $pass);
+	
+	$json = (array) json_decode($response, true);
+	
+	return $json["info"];
 }
 
 ?>

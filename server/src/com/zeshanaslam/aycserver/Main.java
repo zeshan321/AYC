@@ -42,6 +42,9 @@ public class Main {
 		
 		// Creates videos
 		server.createContext("/createvideo", new CreateVideoHandler());
+		
+		// Creates videos
+		server.createContext("/login", new LoginHandler());
 
 		server.setExecutor(null);
 		server.start();

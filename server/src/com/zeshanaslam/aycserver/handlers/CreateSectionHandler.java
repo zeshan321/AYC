@@ -63,9 +63,9 @@ public class CreateSectionHandler implements HttpHandler {
 							@Override
 							public void done(ParseException e) {
 								if (e == null) {
-									serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Section successfully created"));
+									serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Section successfully updated"));
 								} else {
-									serverData.writeResponse(httpExchange, serverData.returnData(false, "9", "Unable to create"));
+									serverData.writeResponse(httpExchange, serverData.returnData(false, "9", "Unable to update create"));
 								}
 							}
 
