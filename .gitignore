@@ -21,4 +21,7 @@ server/config.json
 server/data.db
 
 # Web
-web/config.php
+web/functions/config.php
+web/bootstrap/*
+web/fonts/*
+web/js/*

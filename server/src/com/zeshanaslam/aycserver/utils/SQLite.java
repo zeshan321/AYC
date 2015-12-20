@@ -87,6 +87,9 @@ public class SQLite {
 			while(rs.next()) {
 				loginObject = new LoginObject(rs.getString("password"), rs.getString("videos"), rs.getBoolean("admin"));
 			}
+			
+			rs.close();
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -109,6 +112,9 @@ public class SQLite {
 			while(rs.next()) {
 				sections.add(new SectionObject(rs.getString("Name"), rs.getInt("ID")));
 			}
+			
+			rs.close();
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -187,11 +193,52 @@ public class SQLite {
 			while(rs.next()) {
 				years.add(rs.getString("Name"));
 			}
+			
+			rs.close();
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		return years;
+	}
+	
+	public List<String> getSize(String year) {
+		List<String> years = new ArrayList<>();
+		Statement statement = null;
+
+		try {
+			statement = connection.createStatement();
+
+			ResultSet rs = statement.executeQuery("SELECT * FROM Years WHERE Name = '" + year + "';");
+
+			while(rs.next()) {
+				years.add(rs.getString("Name"));
+			}
+			
+			rs.close();
+			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return years;
+	}
+	
+	public void createYear(String year) {
+		try {
+			String sql = "INSERT INTO Years"
+					+ "(Name) VALUES"
+					+ "(?)";
+
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, year);
+
+			preparedStatement.executeUpdate();
+			preparedStatement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -209,6 +256,9 @@ public class SQLite {
 			while(rs.next()) {
 				videoList.add(new VideoObject(rs.getString("Name"), rs.getString("Desc"), rs.getString("Fileid"), rs.getInt("ID")));
 			}
+			
+			rs.close();
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -280,8 +330,9 @@ public class SQLite {
 
 	private void setupSQL() {
 		Statement satement = null;
-
+		
 		try {
+			//connection.setAutoCommit(false);
 			satement = connection.createStatement();
 
 			String sql = "CREATE TABLE IF NOT EXISTS Years " +
@@ -317,6 +368,9 @@ public class SQLite {
 			satement.executeUpdate(sql);
 
 			satement.close();
+			
+			//connection.commit();
+			//connection.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

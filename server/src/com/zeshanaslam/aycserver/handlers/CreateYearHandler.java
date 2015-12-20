@@ -9,7 +9,7 @@ import com.zeshanaslam.aycserver.Main;
 import com.zeshanaslam.aycserver.utils.SQLite;
 import com.zeshanaslam.aycserver.utils.ServerData;
 
-public class CreateSectionHandler implements HttpHandler {
+public class CreateYearHandler implements HttpHandler {
 
 	@Override
 	public void handle(final HttpExchange httpExchange) throws IOException {
@@ -17,15 +17,14 @@ public class CreateSectionHandler implements HttpHandler {
 
 		ServerData serverData = new ServerData();
 		SQLite sqlite = Main.sqlite;
-		String key = params.get("key"), name = params.get("name"), year = params.get("year");
+		String key = params.get("key"), year = params.get("year");
 
 		if (key.equals(Main.configLoader.getString("editKey"))) {
-			if (sqlite.sectionExists(name)) {
-				sqlite.updateSection(name, year, Integer.parseInt(params.get("ID")));
-				serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Section successfully updated"));
+			if (sqlite.getSize(year).size() == 0) {
+				sqlite.createYear(year);
+				serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Year successfully created"));
 			} else {
-				sqlite.createSection(name, year);
-				serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Section successfully created"));
+				serverData.writeResponse(httpExchange, serverData.returnData(true, null, "Year already exists"));
 			}
 		} else {
 			serverData.writeResponse(httpExchange, serverData.returnData(false, "7", "Not authorized to view this page"));

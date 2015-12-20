@@ -46,6 +46,9 @@ public class Main {
 		// Creates videos
 		server.createContext("/createvideo", new CreateVideoHandler());
 		
+		// Creates year
+		server.createContext("/createyear", new CreateYearHandler());
+		
 		// Creates videos
 		server.createContext("/login", new LoginHandler());
 

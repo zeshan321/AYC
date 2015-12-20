@@ -24,6 +24,22 @@ function httpGet($url)
 
 /* Example:
 
+foreach(getYears() as $value) {
+	echo $value;
+}*/
+
+function getYears() {
+	global $serverURL;
+
+	$response = httpGet($serverURL . "/year");
+
+	$json = (array) json_decode($response, true);
+	
+	return $json["info"];
+}
+
+/* Example:
+
 foreach(getSections("2015") as $value) {
 	echo $value;
 }*/
@@ -36,6 +52,19 @@ function getSections($year) {
 	$json = (array) json_decode($response, true);
 	
 	return $json["info"];
+}
+
+function createYear($year) {
+	global $serverURL;
+	global $editKey;
+	
+	$year = str_replace(" ", "%20", $year);
+	
+	$response = httpGet($serverURL . "/createyear?key=" . $editKey . "&year=" . $year);
+
+	$json = (array) json_decode($response, false);
+	
+	return $json["succeed"];
 }
 
 /* Example:
@@ -68,12 +97,11 @@ function createSection($section, $year) {
 	$section = str_replace(" ", "%20", $section);
 	
 	$response = httpGet($serverURL . "/createsection?key=" . $editKey . "&name=" . $section . "&year=" . $year);
-
+	
 	$json = (array) json_decode($response, false);
 	
 	return $json["succeed"];
 }
-
 
 /* Returns true or false if video has been created successfully */
 
@@ -104,7 +132,22 @@ function login($user, $pass) {
 	
 	$json = (array) json_decode($response, true);
 	
-	return $json["info"];
+	return $json;
 }
 
+function loginCheck($login) {
+	$login = $login["succeed"];
+	
+	return $login;
+}
+
+function isAdmin($login) {
+	$isAdmin = false;
+	
+	foreach($login["info"] as $value) {
+		$isAdmin = $value["admin"];
+	}
+	
+	return $isAdmin;
+}
 ?>
