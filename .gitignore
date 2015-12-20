@@ -17,6 +17,8 @@ hs_err_pid*
 server/.settings*
 server/keystore.jks
 server/config.json
+# test db
+server/data.db
 
 # Web
 web/config.php

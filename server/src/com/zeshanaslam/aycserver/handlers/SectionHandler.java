@@ -1,17 +1,16 @@
 package com.zeshanaslam.aycserver.handlers;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
-import org.parse4j.ParseException;
-import org.parse4j.ParseObject;
-import org.parse4j.ParseQuery;
-import org.parse4j.callback.FindCallback;
+import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.zeshanaslam.aycserver.Main;
+import com.zeshanaslam.aycserver.objects.SectionObject;
+import com.zeshanaslam.aycserver.utils.SQLite;
 import com.zeshanaslam.aycserver.utils.ServerData;
 
 public class SectionHandler implements HttpHandler {
@@ -20,30 +19,19 @@ public class SectionHandler implements HttpHandler {
 	public void handle(final HttpExchange httpExchange) throws IOException {
 		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
 
-		final ServerData serverData = new ServerData();
+		ServerData serverData = new ServerData();
+		SQLite sqlite = Main.sqlite;
 
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Sections");
-		query.whereEqualTo("year", params.get("year"));
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objectList, ParseException e) {
-				if (e == null) {
-					if (objectList == null) {
-						serverData.writeResponse(httpExchange, serverData.returnData(true, null, "No sections found"));
-						return;
-					}
-
-					JSONArray jsonArray = new JSONArray();
-
-					for (ParseObject parseObject: objectList) {						
-						jsonArray.put(parseObject.getString("name"));
-					}
-
-					serverData.writeResponse(httpExchange, serverData.returnData(true, jsonArray));
-				} else {
-					serverData.writeResponse(httpExchange, serverData.returnData(false, "3", "Failed to retrieve sections"));
-				}
-			}
-		});
+		JSONArray jsonArray = new JSONArray();
+		
+		for (SectionObject sectionObject: sqlite.getSections(params.get("year"))) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("name", sectionObject.name);
+			jsonObject.put("ID", sectionObject.ID);
+			
+			jsonArray.put(jsonObject);
+		}
+		
+		serverData.writeResponse(httpExchange, serverData.returnData(true, jsonArray));
 	}
 }

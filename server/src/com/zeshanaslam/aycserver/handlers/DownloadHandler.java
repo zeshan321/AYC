@@ -1,18 +1,10 @@
 package com.zeshanaslam.aycserver.handlers;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-
-import org.parse4j.ParseException;
-import org.parse4j.ParseObject;
-import org.parse4j.ParseQuery;
-import org.parse4j.callback.FindCallback;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.zeshanaslam.aycserver.Main;
 import com.zeshanaslam.aycserver.utils.Encryption;
 import com.zeshanaslam.aycserver.utils.ServerData;
 
@@ -26,31 +18,6 @@ public class DownloadHandler implements HttpHandler {
 		final Encryption encryption = new Encryption();
 		final String username = params.get("user").toLowerCase(), password = params.get("pass"), requestedVideo = params.get("fileid"), year = params.get("year");
 
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
-		query.whereEqualTo("username", username);
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objectList, ParseException e) {
-				if (e == null) {
-					if (objectList == null) {
-						serverData.writeResponse(httpExchange, serverData.returnData(false, "5", "User not found"));
-						return;
-					}
-
-					if (encryption.checkPassword(password, objectList.get(0).getString("password"))) {
-						List<String> videoList = objectList.get(0).getList("videos");
-						if (videoList != null && videoList.contains(year)) {
-							serverData.writeFile(httpExchange, new File(Main.configLoader.getString("filePath") + requestedVideo + Main.configLoader.getString("fileEx") ));
-						} else {
-							serverData.writeResponse(httpExchange, serverData.returnData(false, "7", "Not authorized to view this page"));
-						}
-					} else {
-						serverData.writeResponse(httpExchange, serverData.returnData(false, "6", "Invalid password"));
-					}
-				} else {
-					e.printStackTrace();
-				}
-			}
-		});
+		
 	}
 }
