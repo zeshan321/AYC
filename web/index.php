@@ -5,6 +5,16 @@
    if(!isset($_SESSION['login_user'])) {
    	header("location: login");
    }
+   
+   	if (isset($_POST['selectedYear']) && isset($_POST['sectionInput'])) {
+		createSection($_POST['sectionInput'], $_POST['selectedYear']);
+		header("index?year=" . $_POST['selectedYear']);
+	}
+	
+	if (isset($_POST['yearInput'])) {
+		createYear($_POST['yearInput']);
+		header("index?year=" . $_POST['yearInput']);
+	}
  ?>
  
 <!DOCTYPE html>
@@ -82,6 +92,7 @@
 			<li role="presentation" class="divider"></li>
 			<li><a href="" data-toggle="modal" data-target="#addYear"><span class="glyphicon glyphicon-plus"></span> Add year</a></li>
 			<li><a href="" data-toggle="modal" data-target="#addSection"><span class="glyphicon glyphicon-plus"></span> Add section</a></li>
+			<li><a href="" data-toggle="modal" data-target="#addVideo"><span class="glyphicon glyphicon-plus"></span> Add video</a></li>
 			<li><a href="logout"><span class="glyphicon glyphicon-user"></span> Logout</a></li>
 		</ul>
 
@@ -120,13 +131,6 @@
 	  </div>
 	</div>
 	
-	<?php
-	if (isset($_POST['yearInput'])) {
-		createYear($_POST['yearInput']);
-		echo "<script>window.location = window.location.href = \"index?year=". $_POST['yearInput'] . "\";</script>";
-	}
-	?>
-	
 	<!-- Add section modal -->
 	<div class="modal fade" id="addSection" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
@@ -138,7 +142,7 @@
 			<div class="modal-body">
 				
 				<!-- content goes here -->
-				<form role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+				<form method="post" id="reg-form">
 				  <div class="form-group">
 					<label for="yearInput">Year:</label>
 					<div class="form-group">
@@ -173,28 +177,72 @@
 	  </div>
 	</div>
 	
-	<?php
-	if (isset($_POST['selectedYear']) && isset($_POST['sectionInput'])) {
-		createSection($_POST['sectionInput'], $_POST['selectedYear']);
-		echo "<script>window.location = window.location.href = \"index?year=". $_POST['selectedYear'] . "\";</script>";
-	}
-	?>
+	<!-- Add video modal -->
+	<div class="modal fade" id="addVideo" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="lineModalLabel">My Modal</h3>
+			</div>
+			<div class="modal-body">
+				
+				<!-- content goes here -->
+				<form>
+				  <div class="form-group">
+					<label for="exampleInputEmail1">Email address</label>
+					<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+				  </div>
+				  <div class="form-group">
+					<label for="exampleInputPassword1">Password</label>
+					<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+				  </div>
+				  <div class="form-group">
+					<label for="exampleInputFile">File input</label>
+					<input type="file" id="exampleInputFile">
+					<p class="help-block">Example block-level help text here.</p>
+				  </div>
+				  <div class="checkbox">
+					<label>
+					  <input type="checkbox"> Check me out
+					</label>
+				  </div>
+				  <button type="submit" class="btn btn-default">Submit</button>
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group btn-group-justified" role="group" aria-label="group button">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" data-dismiss="modal"  role="button">Close</button>
+					</div>
+					<div class="btn-group btn-delete hidden" role="group">
+						<button type="button" id="delImage" class="btn btn-default btn-hover-red" data-dismiss="modal"  role="button">Delete</button>
+					</div>
+					<div class="btn-group" role="group">
+						<button type="button" id="saveImage" class="btn btn-default btn-hover-green" data-action="save" role="button">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	  </div>
+	</div>
 		
 	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">			
-		<h1 id="title" name="title" >Hello World</h1>
-
-		<div class="list-group list-group-horizontal">
-                <a href="#" class="list-group-item">Item One</a>
-                <a href="#" class="list-group-item">Item Two</a>
-                <a href="#" class="list-group-item">Item Three</a>
-                <a href="#" class="list-group-item">Item Four</a>
-        </div>
+	<br>
+	<br>
+	<div class="video-container">
+		<iframe id="videoframe" src="" name="videoframe" scrolling="no" frameborder="no" align="center" ></iframe>
+		</div>
 	</div>	<!--/.main-->
 	
 	<script>
+	if (getParam("year") != "") {
+		document.getElementById('videoframe').setAttribute('src', "videos" + location.search);
+	}
 	function updatePrams(year, name, id) {
 		window.history.pushState(null, null, 'index?year=' + year + '&section=' + name + '&sid=' + id);
-		document.getElementById("title").innerHTML = "Year: " + getParam("year") + " Section: " + getParam("section");
+		document.getElementById('videoframe').setAttribute('src', "videos" + location.search);
 	}
 	
 	function getParam(name) {
