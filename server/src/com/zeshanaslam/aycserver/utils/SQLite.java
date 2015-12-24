@@ -266,14 +266,14 @@ public class SQLite {
 		return videoList;
 	}
 	
-	public boolean videoExists(String fileid) {
+	public boolean videoExists(String year, String section) {
 		Statement statement = null;
 		boolean videoExists = false;
 		try {
 			statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT * FROM Videos WHERE Fileid = '" + fileid + "';");
+			ResultSet rs = statement.executeQuery("SELECT * FROM Videos WHERE Year = '" + year + "' AND Section = '" + section + "';");
 
-			if (rs.next() && rs.getString("Fileid").equals(fileid)) {
+			if (rs.next()) {
 				videoExists = true;
 			} else {
 				videoExists = false;
@@ -326,6 +326,27 @@ public class SQLite {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public int getLastID() {
+		Statement statement = null;
+		int ID = 0;
+		try {
+			statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("SELECT * FROM SQLITE_SEQUENCE WHERE name='Videos';");
+
+			while (rs.next()) {
+				ID = rs.getInt("seq");
+				break;
+			}
+
+			rs.close();
+			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return ID;
 	}
 
 	private void setupSQL() {

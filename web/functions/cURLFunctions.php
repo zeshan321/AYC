@@ -103,7 +103,7 @@ function createSection($section, $year) {
 	return $json["succeed"];
 }
 
-/* Returns true or false if video has been created successfully */
+/* Returns json array once video has been created */
 
 function createVideo($title, $desc, $fileid, $section, $year) {
 	global $serverURL;
@@ -115,10 +115,28 @@ function createVideo($title, $desc, $fileid, $section, $year) {
 	
 	$response = httpGet($serverURL . "/createvideo?key=" . $editKey . "&title=" . $title . "&desc=" . $desc . "&section=" . $section . "&fileid=" . $fileid . "&year=" . $year);
 
-	$json = (array) json_decode($response, false);
+	$json = (array) json_decode($response, true);
 	
-	return $json["succeed"];
+	return $json["info"];
 }
+
+/* Returns json array once video has been updated */
+
+function updateVideo($title, $desc, $fileid, $section, $year, $ID) {
+	global $serverURL;
+	global $editKey;
+	
+	$title = str_replace(" ", "%20", $title);
+	$desc = str_replace(" ", "%20", $desc);
+	$section = str_replace(" ", "%20", $section);
+	
+	$response = httpGet($serverURL . "/createvideo?key=" . $editKey . "&title=" . $title . "&desc=" . $desc . "&section=" . $section . "&fileid=" . $fileid . "&year=" . $year . "&ID=" . $ID);
+
+	$json = (array) json_decode($response, true);
+	
+	return $json["info"];
+}
+
 
 /* Returns json array from login 
 foreach(login("zeshan", "aslam") as $value) {

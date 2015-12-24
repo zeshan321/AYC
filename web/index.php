@@ -1,21 +1,21 @@
 <?php
-   include 'functions/cURLFunctions.php';
-   session_start();
-   
-   if(!isset($_SESSION['login_user'])) {
-   	header("location: login");
-   }
-   
-   	if (isset($_POST['selectedYear']) && isset($_POST['sectionInput'])) {
-		createSection($_POST['sectionInput'], $_POST['selectedYear']);
-		header("index?year=" . $_POST['selectedYear']);
-	}
-	
-	if (isset($_POST['yearInput'])) {
-		createYear($_POST['yearInput']);
-		header("index?year=" . $_POST['yearInput']);
-	}
- ?>
+include 'functions/cURLFunctions.php';
+session_start();
+
+if (!isset($_SESSION['login_user'])) {
+    header("location: login");
+}
+
+if (isset($_POST['selectedYear']) && isset($_POST['sectionInput'])) {
+    createSection($_POST['sectionInput'], $_POST['selectedYear']);
+    header("index?year=" . $_POST['selectedYear']);
+}
+
+if (isset($_POST['yearInput'])) {
+    createYear($_POST['yearInput']);
+    header("index?year=" . $_POST['yearInput']);
+}
+?>
  
 <!DOCTYPE html>
 <html>
@@ -71,9 +71,9 @@
 					echo "<div class=\"collapse in\" id=\"d" . $i . "\">";
 					foreach(getSections($years) as $section) {
 						if (isset($_GET['section']) && $_GET['section'] == $section["name"]) {
-							echo "<a href=\"#\" onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\" class=\"active list-group-item\">" . $section["name"] . "</a>\n";
+							echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\" class=\"active list-group-item\">" . $section["name"] . "</a>\n";
 						} else {
-							echo "<a href=\"#\" onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "</a>\n";
+							echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "</a>\n";
 						}
 					}
 					echo "</div>";
@@ -81,7 +81,7 @@
 					echo "<a href=\"#d". $i ."\" data-toggle=\"collapse\" data-parent=\"#MainMenu\"><span class=\"glyphicon glyphicon-download\"></span>" . $years ."</a>";
 					echo "<div class=\"collapse\" id=\"d" . $i . "\">";
 					foreach(getSections($years) as $section) {
-						echo "<a href=\"#\" onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "</a>\n";
+						echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "</a>\n";
 					}
 					echo "</div>";
 				}
@@ -90,9 +90,9 @@
 			?>
 			</li>
 			<li role="presentation" class="divider"></li>
-			<li><a href="" data-toggle="modal" data-target="#addYear"><span class="glyphicon glyphicon-plus"></span> Add year</a></li>
-			<li><a href="" data-toggle="modal" data-target="#addSection"><span class="glyphicon glyphicon-plus"></span> Add section</a></li>
-			<li><a href="" data-toggle="modal" data-target="#addVideo"><span class="glyphicon glyphicon-plus"></span> Add video</a></li>
+			<li><a data-toggle="modal" data-target="#addYear"><span class="glyphicon glyphicon-plus"></span> Add year</a></li>
+			<li><a data-toggle="modal" data-target="#addSection"><span class="glyphicon glyphicon-plus"></span> Add section</a></li>
+			<li><a onclick="openModalVideo()"><span class="glyphicon glyphicon-plus"></span> Add video</a></li>
 			<li><a href="logout"><span class="glyphicon glyphicon-user"></span> Logout</a></li>
 		</ul>
 
@@ -112,7 +112,7 @@
 				<form role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
 				  <div class="form-group">
 					<label for="yearInput">Year:</label>
-					<input type="number" class="form-control" id="yearInput" name="yearInput" placeholder="2015">
+					<input type="number" class="form-control" id="yearInput" name="yearInput" placeholder="2015" required>
 				  </div>
 
 				</div>
@@ -142,7 +142,7 @@
 			<div class="modal-body">
 				
 				<!-- content goes here -->
-				<form method="post" id="reg-form">
+				<form role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
 				  <div class="form-group">
 					<label for="yearInput">Year:</label>
 					<div class="form-group">
@@ -158,7 +158,7 @@
 				  
 				  <div class="form-group">
 					<label for="sectionInput">Section:</label>
-					<input type="text" class="form-control" id="sectionInput" name="sectionInput" placeholder="Section name">
+					<input type="text" class="form-control" id="sectionInput" name="sectionInput" placeholder="Section name" required>
 				  </div>
 
 				</div>
@@ -183,32 +183,38 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-				<h3 class="modal-title" id="lineModalLabel">My Modal</h3>
+				<h3 class="modal-title" id="lineModalLabel">Add Video</h3>
 			</div>
 			<div class="modal-body">
 				
 				<!-- content goes here -->
-				<form>
+				<form action="upload.php" method="post" enctype="multipart/form-data">
+					<div class="form-group">
+					  <label for="selectedyearvideo">Year:</label>
+					  <select id="selectedyearvideo" name="selectedyearvideo" class="form-control">
+					  <?php
+					  foreach($yearList as $years) {
+						  echo "<option>". $years . "</option>";
+					  }
+					  ?>
+					  </select>
+					</div>
 				  <div class="form-group">
-					<label for="exampleInputEmail1">Email address</label>
-					<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+					<label for="videoinputsection">Section</label>
+					<input type="text" class="form-control" name="videoinputsection" id="videoinputsection" value="" required>
 				  </div>
 				  <div class="form-group">
-					<label for="exampleInputPassword1">Password</label>
-					<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+					<label for="videoinputtitle">Title</label>
+					<input type="text" class="form-control" name="videoinputtitle" id="videoinputtitle" value="" required>
 				  </div>
 				  <div class="form-group">
-					<label for="exampleInputFile">File input</label>
-					<input type="file" id="exampleInputFile">
-					<p class="help-block">Example block-level help text here.</p>
+					<label for="videoinputdesc">Description</label>
+					<textarea rows="4" cols="50"type="text" class="form-control" name="videoinputdesc" id="videoinputdesc" value="" required></textarea>
 				  </div>
-				  <div class="checkbox">
-					<label>
-					  <input type="checkbox"> Check me out
-					</label>
+				  <div class="form-group">
+					<label for="updatevideoinputfile">File</label>
+					<input type="file" name="updatevideoinputfile" id="updatevideoinputfile">
 				  </div>
-				  <button type="submit" class="btn btn-default">Submit</button>
-				</form>
 
 			</div>
 			<div class="modal-footer">
@@ -216,28 +222,75 @@
 					<div class="btn-group" role="group">
 						<button type="button" class="btn btn-default" data-dismiss="modal"  role="button">Close</button>
 					</div>
-					<div class="btn-group btn-delete hidden" role="group">
-						<button type="button" id="delImage" class="btn btn-default btn-hover-red" data-dismiss="modal"  role="button">Delete</button>
-					</div>
 					<div class="btn-group" role="group">
-						<button type="button" id="saveImage" class="btn btn-default btn-hover-green" data-action="save" role="button">Save</button>
+						<button type="submit" class="btn btn-default">Submit</button>
 					</div>
 				</div>
 			</div>
+			</form>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Update video modal -->
+	<div class="modal fade" id="updateVideo" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="lineModalLabel">Update Video</h3>
+			</div>
+			<div class="modal-body">
+				
+				<!-- content goes here -->
+				<form action="upload.php" method="post" enctype="multipart/form-data">
+				  <div class="form-group">
+					<label for="updatevideoinputtitle">Title</label>
+					<input type="text" class="form-control" name="updatevideoinputtitle" id="updatevideoinputtitle" value="" required>
+				  </div>
+				  <div class="form-group">
+					<label for="updatevideoinputdesc">Description</label>
+					<textarea rows="4" cols="50"type="text" class="form-control" name="updatevideoinputdesc" id="updatevideoinputdesc" value="" required></textarea>
+				  </div>
+				  <div class="form-group">
+					<label for="updatevideoinputfile">File</label>
+					<input type="file" name="updatevideoinputfile" id="updatevideoinputfile">
+				  </div>
+				  
+				  <div class="form-group">
+					<input type="hidden" name="updatevideoid" id="updatevideoid">
+					<input type="hidden" name="updatevideoyear" id="updatevideoyear">
+					<input type="hidden" name="updatevideosection" id="updatevideosection">
+				  </div>
+
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group btn-group-justified" role="group" aria-label="group button">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" data-dismiss="modal"  role="button">Close</button>
+					</div>
+					<div class="btn-group" role="group">
+						<button type="submit" class="btn btn-default">Submit</button>
+					</div>
+				</div>
+			</div>
+			</form>
 		</div>
 	  </div>
 	</div>
 		
+	<!-- main -->
 	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">			
 	<br>
 	<br>
 	<div class="video-container">
 		<iframe id="videoframe" src="" name="videoframe" scrolling="no" frameborder="no" align="center" ></iframe>
 		</div>
-	</div>	<!--/.main-->
+	</div>	
+	<!--/.main-->
 	
 	<script>
-	if (getParam("year") != "") {
+	if (getParam("year") != "" && getParam("section") != "") {
 		document.getElementById('videoframe').setAttribute('src', "videos" + location.search);
 	}
 	function updatePrams(year, name, id) {
@@ -250,6 +303,35 @@
 		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 			results = regex.exec(location.search);
 		return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
+	
+	function openModalVideo() {
+		if (getParam("year") != "" && getParam("section") != "") {
+			var selectYear = document.getElementById("selectedyearvideo");
+
+			document.getElementById('videoinputsection').setAttribute('value', getParam("section"));
+			selectYear.setAttribute('selected', getParam("year"));
+			for (var i = 0; i < selectYear.options.length; i++) { 
+				if (selectYear.options[i].text == getParam("year")) {
+					selectYear.selectedIndex = i;
+					break;
+				}
+			}
+			
+			$('#addVideo').modal('show');
+		} else {
+			$('#addVideo').modal('show');
+		}
+	}
+	
+	function openUpdateVideo(id, title, desc) {
+		document.getElementById('updatevideoid').setAttribute('value', id);
+		document.getElementById('updatevideoyear').setAttribute('value', getParam("year"));
+		document.getElementById('updatevideosection').setAttribute('value', getParam("section"));
+		document.getElementById('updatevideoinputtitle').setAttribute('value', title);
+		document.getElementById("updatevideoinputdesc").value = desc;
+
+		$('#updateVideo').modal('show');
 	}
 	</script>
 
