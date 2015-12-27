@@ -51,6 +51,12 @@ public class Main {
 		
 		// Creates videos
 		server.createContext("/login", new LoginHandler());
+		
+		// Deletes sections, videos and years
+		server.createContext("/delete", new DeleteHandler());
+		
+		// Adds years to users
+		server.createContext("/owns", new OwnsHandler());
 
 		server.setExecutor(null);
 		server.start();

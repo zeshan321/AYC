@@ -11,7 +11,7 @@ if (isset($_POST['videoinputsection']) && isset($_POST['videoinputtitle']) && is
 	global $uploadDir;
     $video = createVideo($_POST['videoinputtitle'], $_POST['videoinputdesc'], "0", $_POST['videoinputsection'], $_POST['selectedyearvideo']);
 	
-	if ($_FILES['videoinputfile']['name'] != "") {
+	if (!empty($_FILES['videoinputfile']) && $_FILES['videoinputfile']['name'] != "") {
 		foreach ($video as $value) {
 			$fileExt = end((explode(".", $_FILES["videoinputfile"]["name"])));
 			$fileName = $value["ID"] . "." . $fileExt;
@@ -21,14 +21,14 @@ if (isset($_POST['videoinputsection']) && isset($_POST['videoinputtitle']) && is
 		}
 	}
 	
-	echo "<script>window.location.assign(\"index?year=" . $_POST['selectedyearvideo'] ."&section=" . $_POST['videoinputsection'] . "\");</script>";
+	header("location: index?year=" . $_POST['selectedyearvideo'] ."&section=" . $_POST['videoinputsection']);
 }
 
 if (isset($_POST['updatevideoinputtitle']) && isset($_POST['updatevideoinputdesc']) && isset($_POST['updatevideoid']) && isset($_POST['updatevideoyear']) && isset($_POST['updatevideosection'])) {
 	global $uploadDir;
     updateVideo($_POST['updatevideoinputtitle'], $_POST['updatevideoinputdesc'], "0", $_POST['updatevideosection'], $_POST['updatevideoyear'], $_POST['updatevideoid']);
 	
-	if ($_FILES['updatevideoinputfile']['name'] != "") {
+	if (!empty($_FILES['videoinputfile']) && $_FILES['updatevideoinputfile']['name'] != "") {
 		$fileExt = end((explode(".", $_FILES["updatevideoinputfile"]["name"])));
 		$fileName = $_POST['updatevideoid'] . "." . $fileExt;
 		move_uploaded_file($_FILES["updatevideoinputfile"]["tmp_name"], $uploadDir . $fileName);
@@ -36,6 +36,6 @@ if (isset($_POST['updatevideoinputtitle']) && isset($_POST['updatevideoinputdesc
 		chmod($uploadDir . $fileName, 0644);
 	}
 	
-	echo "<script>window.location.assign(\"index?year=" . $_POST['updatevideoyear'] ."&section=" . $_POST['updatevideosection'] . "\");</script>";
+	header("location: index?year=" . $_POST['updatevideoyear'] ."&section=" . $_POST['updatevideosection']);
 }
 ?>

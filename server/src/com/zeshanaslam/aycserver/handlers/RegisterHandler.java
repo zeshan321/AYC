@@ -22,7 +22,7 @@ public class RegisterHandler implements HttpHandler {
 		String username = params.get("user").toLowerCase(), password = encryption.encrypt(params.get("pass"));
 
 		if (!sqlite.isRegistered(username)) {
-			sqlite.registerUser(username, password, "");
+			sqlite.registerUser(username, password, Main.configLoader.getString("defaultYear"));
 			serverData.writeResponse(httpExchange, serverData.returnData(true, null, "User successfully registered"));
 		} else {
 			serverData.writeResponse(httpExchange, serverData.returnData(false, "2", "Already registered"));

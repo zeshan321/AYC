@@ -8,12 +8,32 @@ if (!isset($_SESSION['login_user'])) {
 
 if (isset($_POST['selectedYear']) && isset($_POST['sectionInput'])) {
     createSection($_POST['sectionInput'], $_POST['selectedYear']);
-    header("index?year=" . $_POST['selectedYear']);
+    header("location: index?year=" . $_POST['selectedYear']);
 }
 
 if (isset($_POST['yearInput'])) {
     createYear($_POST['yearInput']);
-    header("index?year=" . $_POST['yearInput']);
+    header("location: index?year=" . $_POST['yearInput']);
+}
+
+if (isset($_POST['deletevideoid'])) {
+	deleteVideo($_POST['deletevideoid']);
+}
+
+if (isset($_POST['deleteyearid'])) {
+	deleteYear($_POST['deleteyearid']);
+}
+
+if (isset($_POST['updatesectionInput']) && isset($_POST['updatesectionold']) && isset($_POST['sectionsid']) && isset($_POST['updatesectionyear'])) {
+	if ($_POST['updatesectionInput'] != "") {
+		updateSection($_POST['updatesectionold'], $_POST['updatesectionInput'], $_POST['sectionsid'], $_POST['updatesectionyear']);
+		
+		header("location: index?year=" . $_POST['updatesectionyear'] . "&section=" . $_POST['updatesectionInput']);
+	} else {
+		deleteSection($_POST['updatesectionold'], $_POST['updatesectionyear']);
+		
+		header("location: index?year=" . $_POST['updatesectionyear'] . "&section=" . $_POST['updatesectionold']);
+	}
 }
 ?>
  
@@ -67,21 +87,21 @@ if (isset($_POST['yearInput'])) {
 			$yearList = getYears();
 			foreach($yearList as $years) {
 				if (isset($_GET['year']) && $_GET['year'] == $years) {
-					echo "<a href=\"#d". $i ."\" data-toggle=\"collapse\" data-parent=\"#MainMenu\"><span class=\"glyphicon glyphicon-download\"></span>" . $years ."</a>";
+					echo "<a href=\"#d". $i ."\" data-toggle=\"collapse\" data-parent=\"#MainMenu\"><span class=\"glyphicon glyphicon-chevron-down\"></span>" . $years ."<button onclick=\"openDeleteYear('". $years ."');\" style=\"border:0; background:transparent\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-trash\"></button></a>";
 					echo "<div class=\"collapse in\" id=\"d" . $i . "\">";
 					foreach(getSections($years) as $section) {
 						if (isset($_GET['section']) && $_GET['section'] == $section["name"]) {
-							echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\" class=\"active list-group-item\">" . $section["name"] . "</a>\n";
+							echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\" class=\"active list-group-item\">" . $section["name"] . "<button onclick=\"openEditSection('" . $section["name"] . "','" . $section["ID"] ."','". $years . "');\" style=\"border:0; background:transparent\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-pencil\"></button></a>\n";
 						} else {
-							echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "</a>\n";
+							echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "<button onclick=\"openEditSection('" . $section["name"] . "','" . $section["ID"] ."','". $years ."');\" style=\"border:0; background:transparent\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-pencil\"></button></a>\n";
 						}
 					}
 					echo "</div>";
 				} else {
-					echo "<a href=\"#d". $i ."\" data-toggle=\"collapse\" data-parent=\"#MainMenu\"><span class=\"glyphicon glyphicon-download\"></span>" . $years ."</a>";
+					echo "<a href=\"#d". $i ."\" data-toggle=\"collapse\" data-parent=\"#MainMenu\"><span class=\"glyphicon glyphicon-chevron-down\"></span>" . $years ."<button onclick=\"openDeleteYear('". $years ."');\" style=\"border:0; background:transparent\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-trash\"></button></a>";
 					echo "<div class=\"collapse\" id=\"d" . $i . "\">";
 					foreach(getSections($years) as $section) {
-						echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "</a>\n";
+						echo "<a onclick=\"updatePrams('". $years . "','" . $section["name"] . "','" . $section["ID"] . "')\"  class=\"list-group-item\">" . $section["name"] . "<button onclick=\"openEditSection('" . $section["name"] . "','" . $section["ID"] ."','". $years ."');\" style=\"border:0; background:transparent\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-pencil\"></button></a>\n";
 					}
 					echo "</div>";
 				}
@@ -278,6 +298,117 @@ if (isset($_POST['yearInput'])) {
 		</div>
 	  </div>
 	</div>
+	
+	<!-- Delete video modal -->
+	<div class="modal fade" id="deleteVideo" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="lineModalLabel">Delete Video</h3>
+			</div>
+			<div class="modal-body">
+				
+				<!-- content goes here -->
+				<form id="deletevideoform" action="<?php echo basename($_SERVER['REQUEST_URI']); ?>" method="post">
+				  <h4 id="deletemsg">Are you sure you want to delete <h4>
+				  
+				  <div class="form-group">
+					<input type="hidden" name="deletevideoid" id="deletevideoid">
+				  </div>
+
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group btn-group-justified" role="group" aria-label="group button">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" data-dismiss="modal"  role="button">Close</button>
+					</div>
+					<div class="btn-group" role="group">
+						<button type="submit" class="btn btn-default">Submit</button>
+					</div>
+				</div>
+			</div>
+			</form>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Delete year modal -->
+	<div class="modal fade" id="deleteYear" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="lineModalLabel">Delete Year</h3>
+			</div>
+			<div class="modal-body">
+				
+				<!-- content goes here -->
+				<form role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+				  <h4 id="deletemsgyear">Are you sure you want to delete <h4>
+				  
+				  <div class="form-group">
+					<input type="hidden" name="deleteyearid" id="deleteyearid">
+				  </div>
+
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group btn-group-justified" role="group" aria-label="group button">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" data-dismiss="modal"  role="button">Close</button>
+					</div>
+					<div class="btn-group" role="group">
+						<button type="submit" class="btn btn-default">Submit</button>
+					</div>
+				</div>
+			</div>
+			</form>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- update section modal -->
+	<div class="modal fade" id="updateSection" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="lineModalLabel">Update Section</h3>
+			</div>
+			<div class="modal-body">
+				
+				<!-- content goes here -->
+				<form id="updatesectionform" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+				  <div class="form-group">
+					<label for="updatesectionInput">Section:</label>
+					<input type="text" class="form-control" id="updatesectionInput" name="updatesectionInput" placeholder="Section name" required>
+				  </div>
+				  
+				  <div class="form-group">
+					<input type="hidden" name="updatesectionold" id="updatesectionold">
+					<input type="hidden" name="sectionsid" id="sectionsid">
+					<input type="hidden" name="updatesectionyear" id="updatesectionyear">
+				  </div>
+
+				  <div class="form-group">
+					<button onclick="deleteSection();" type="button" class="btn btn-danger btn-block">Delete</button>
+				  </div>
+
+				<div class="modal-footer">
+					<div class="btn-group btn-group-justified" role="group" aria-label="group button">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-default" data-dismiss="modal"  role="button">Close</button>
+						</div>
+						<div class="btn-group" role="group">
+							<button type="submit" class="btn btn-default">Submit</button>
+						</div>
+					</div>
+				</div>
+				</form>
+		</div>
+	  </div>
+	</div>
+	</div>
 		
 	<!-- main -->
 	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">			
@@ -332,6 +463,38 @@ if (isset($_POST['yearInput'])) {
 		document.getElementById("updatevideoinputdesc").value = desc;
 
 		$('#updateVideo').modal('show');
+	}
+	
+	function openDeleteVideo(id, name) {
+		var newURL = window.location.href.match(/[^\/]*$/);
+		
+		document.getElementById('deletevideoform').action = newURL; 
+		document.getElementById('deletevideoid').setAttribute('value', id);
+		document.getElementById("deletemsg").innerHTML = "Are you sure you want to delete " + name + "?";
+
+		$('#deleteVideo').modal('show');
+	}
+	
+	function openDeleteYear(year) {
+		document.getElementById("deletemsgyear").innerHTML = "Are you sure you want to delete " + year + "?";
+		document.getElementById('deleteyearid').setAttribute('value', year);
+		
+		$('#deleteYear').modal('show');
+	}
+	
+	function openEditSection(section, id, year) {
+		document.getElementById('updatesectionInput').setAttribute('value', section);
+		document.getElementById('updatesectionold').setAttribute('value', section);
+		document.getElementById('sectionsid').setAttribute('value', id);
+		document.getElementById('updatesectionyear').setAttribute('value', year);
+
+		$('#updateSection').modal('show');
+	}
+	
+	function deleteSection() {
+		document.getElementById('updatesectionInput').setAttribute('value', "");
+		
+		document.getElementById("updatesectionform").submit();
 	}
 	</script>
 

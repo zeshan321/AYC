@@ -54,6 +54,21 @@ function getSections($year) {
 	return $json["info"];
 }
 
+/* Returns true or false if section has been created successfully */
+
+function createSection($section, $year) {
+	global $serverURL;
+	global $editKey;
+	
+	$section = str_replace(" ", "%20", $section);
+	
+	$response = httpGet($serverURL . "/createsection?key=" . $editKey . "&name=" . $section . "&year=" . $year);
+	
+	$json = (array) json_decode($response, false);
+	
+	return $json["succeed"];
+}
+
 function createYear($year) {
 	global $serverURL;
 	global $editKey;
@@ -88,21 +103,6 @@ function getVideos($section, $year) {
 	return $json["info"];
 }
 
-/* Returns true or false if section has been created successfully */
-
-function createSection($section, $year) {
-	global $serverURL;
-	global $editKey;
-	
-	$section = str_replace(" ", "%20", $section);
-	
-	$response = httpGet($serverURL . "/createsection?key=" . $editKey . "&name=" . $section . "&year=" . $year);
-	
-	$json = (array) json_decode($response, false);
-	
-	return $json["succeed"];
-}
-
 /* Returns json array once video has been created */
 
 function createVideo($title, $desc, $fileid, $section, $year) {
@@ -131,6 +131,45 @@ function updateVideo($title, $desc, $fileid, $section, $year, $ID) {
 	$section = str_replace(" ", "%20", $section);
 	
 	$response = httpGet($serverURL . "/createvideo?key=" . $editKey . "&title=" . $title . "&desc=" . $desc . "&section=" . $section . "&fileid=" . $fileid . "&year=" . $year . "&ID=" . $ID);
+
+	$json = (array) json_decode($response, true);
+	
+	return $json["info"];
+}
+
+function deleteVideo($ID) {
+	global $serverURL;
+	global $editKey;
+	
+	httpGet($serverURL . "/delete?key=" . $editKey . "&type=" . "video" . "&ID=" . $ID);
+}
+
+function deleteYear($type, $year) {
+	global $serverURL;
+	global $editKey;
+	
+	httpGet($serverURL . "/delete?key=" . $editKey . "&type=" . "year" . "&year=" . $year);
+}
+
+function deleteSection($section, $year) {
+	global $serverURL;
+	global $editKey;
+	
+	$section = str_replace(" ", "%20", $section);
+	
+	httpGet($serverURL . "/delete?key=" . $editKey . "&type=" . "section" . "&section=" . $section . "&year=" . $year);
+}
+
+/* Returns json array once section has been updated */
+
+function updateSection($oldsection, $newsection, $ID, $year) {
+	global $serverURL;
+	global $editKey;
+	
+	$oldsection = str_replace(" ", "%20", $oldsection);
+	$newsection = str_replace(" ", "%20", $newsection);
+	
+	$response = httpGet($serverURL . "/createsection?key=" . $editKey . "&name=" . $newsection . "&year=" . $year . "&oldname=" . $oldsection . "&ID=" . $ID);
 
 	$json = (array) json_decode($response, true);
 	
