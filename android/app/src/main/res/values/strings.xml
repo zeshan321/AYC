@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AYC</string>
+    <string name="signup_text">No account yet? Create one</string>
+    <string name="prompt_user">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="invalid_username">Enter a valid username!</string>
+    <string name="invalid_password">Invalid password!</string>
+    <string name="server_url">https://159.203.11.62:8000</string>
+</resources>
