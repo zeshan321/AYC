@@ -1,8 +1,10 @@
-package com.zeshanaslam.ayc;
+package com.zeshanaslam.ayc.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.zeshanaslam.ayc.R;
 
 public class MainActivity extends AppCompatActivity {
 

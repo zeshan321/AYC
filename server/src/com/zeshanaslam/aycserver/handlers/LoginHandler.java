@@ -23,8 +23,14 @@ public class LoginHandler implements HttpHandler {
 		ServerData serverData = new ServerData();
 		HashPassword hash = new HashPassword();
 		SQLite sqlite = Main.sqlite;
+		
 		String username = params.get("user").toLowerCase(), password = params.get("pass");
 
+		if (password.length() > 19) {
+			serverData.writeResponse(httpExchange, serverData.returnData(false, "12", "Password length"));
+			return;
+		}
+		
 		LoginObject loginObject = sqlite.getLoginData(username);
 		
 		if (loginObject == null) {

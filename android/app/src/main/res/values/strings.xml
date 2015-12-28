@@ -1,10 +1,27 @@
 <resources>
     <string name="app_name">AYC</string>
-    <string name="signup_text">No account yet? Create one</string>
+    <string name="screen_name">Aikido Yoshinkai\nCanada</string>
+    <string name="server_url">https://159.203.11.62:8000</string>
+
+    <!-- Login -->
+    <string name="signup_text">No account yet? Create one!</string>
     <string name="prompt_user">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Login</string>
     <string name="invalid_username">Enter a valid username!</string>
     <string name="invalid_password">Invalid password!</string>
-    <string name="server_url">https://159.203.11.62:8000</string>
+
+    <!-- Login errors -->
+    <string name="incorrect_login">The username or password you entered is incorrect.</string>
+    <string name="login_error">Unable to login. Please try again later.</string>
+
+    <!-- Sign up -->
+    <string name="prompt_email">Email</string>
+    <string name="action_sign_up">Create Account</string>
+    <string name="login_text">Already a member? Login!</string>
+    <string name="invalid_email">Invalid email address!</string>
+
+    <!-- Sign up errors -->
+    <string name="already_registered">Someone already has that username.</string>
+    <string name="signup_error">Unable to signup. Please try again later.</string>
 </resources>

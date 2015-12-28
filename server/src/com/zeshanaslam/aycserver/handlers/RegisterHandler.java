@@ -19,8 +19,15 @@ public class RegisterHandler implements HttpHandler {
 		ServerData serverData = new ServerData();
 		HashPassword hash = new HashPassword();
 		SQLite sqlite = Main.sqlite;
-
-		String username = params.get("user").toLowerCase(), email = params.get("email"), password = hash.hashPassword(params.get("pass"));
+		
+		String username = params.get("user").toLowerCase(), email = params.get("email"), password = params.get("pass");
+		
+		if (password.length() > 19) {
+			serverData.writeResponse(httpExchange, serverData.returnData(false, "12", "Password length"));
+			return;
+		}
+		
+		password = hash.hashPassword(params.get("pass"));
 
 		if (!sqlite.isRegistered(username)) {
 			sqlite.registerUser(username, email, password, Main.configLoader.getString("defaultYear"));

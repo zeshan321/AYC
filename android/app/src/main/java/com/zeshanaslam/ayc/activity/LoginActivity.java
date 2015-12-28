@@ -1,14 +1,19 @@
-package com.zeshanaslam.ayc;
+package com.zeshanaslam.ayc.activity;
 
-import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zeshanaslam.ayc.R;
+import com.zeshanaslam.ayc.SignupActivity;
 import com.zeshanaslam.ayc.Utils.CallBack;
 import com.zeshanaslam.ayc.Utils.HTTPSManager;
 
@@ -21,19 +26,31 @@ import butterknife.Bind;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // Edit text views
     @Bind(R.id.login_username)
     EditText _usernameText;
     @Bind(R.id.login_password)
     EditText _passwordText;
+
+    // Text views
+    @Bind(R.id.tv_signup)
+    TextView _signupUser;
+
+    // Button views
     @Bind(R.id.login_button)
     Button _loginButton;
 
+    // Strings
     @BindString(R.string.server_url)
     String _serverURL;
     @BindString(R.string.invalid_username)
     String _invalidUsername;
     @BindString(R.string.invalid_password)
     String _invalidPassword;
+    @BindString(R.string.incorrect_login)
+    String _invalidLogin;
+    @BindString(R.string.login_error)
+    String _loginError;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         // UI
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        // Bind views
         ButterKnife.bind(this);
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +68,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 login();
+            }
+        });
+
+        _signupUser.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent_next = new Intent(LoginActivity.this, SignupActivity.class);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+                startActivity(intent_next);
+                finish();
             }
         });
     }
@@ -62,12 +91,6 @@ public class LoginActivity extends AppCompatActivity {
 
         _loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
-
         String username = _usernameText.getText().toString();
         String password = _passwordText.getText().toString();
 
@@ -76,24 +99,27 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onRequestComplete(String response) {
-                System.out.println(response);
+                if (loginCheck(response)) {
+                    onLoginSuccess();
+                } else {
+                    onLoginFailed();
+                }
             }
 
             @Override
             public void onRequestFailed() {
-                System.out.println("Failed");
+                onLoginError();
             }
         });
     }
 
     private boolean loginCheck(String JSON) {
         boolean login = true;
+
         try {
             JSONObject jsonObject = new JSONObject(JSON);
 
-            if (jsonObject.has("code")) {
-                login = false;
-            }
+            login = jsonObject.getBoolean("succeed");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -102,14 +128,36 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onLoginSuccess() {
-        _loginButton.setEnabled(true);
-        finish();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                _loginButton.setEnabled(true);
+
+                finish();
+            }
+        });
     }
 
     private void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getBaseContext(), _invalidLogin, Toast.LENGTH_LONG).show();
 
-        _loginButton.setEnabled(true);
+                _loginButton.setEnabled(true);
+            }
+        });
+    }
+
+    private void onLoginError() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getBaseContext(), _loginError, Toast.LENGTH_LONG).show();
+
+                _loginButton.setEnabled(true);
+            }
+        });
     }
 
     private boolean validateInput() {
@@ -125,7 +173,7 @@ public class LoginActivity extends AppCompatActivity {
             _usernameText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+        if (password.isEmpty() || password.length() < 4 || password.length() > 19) {
             _passwordText.setError(_invalidPassword);
             valid = false;
         } else {
