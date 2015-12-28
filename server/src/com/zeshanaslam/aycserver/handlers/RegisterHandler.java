@@ -6,7 +6,7 @@ import java.util.Map;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.zeshanaslam.aycserver.Main;
-import com.zeshanaslam.aycserver.utils.Encryption;
+import com.zeshanaslam.aycserver.utils.HashPassword;
 import com.zeshanaslam.aycserver.utils.SQLite;
 import com.zeshanaslam.aycserver.utils.ServerData;
 
@@ -17,10 +17,10 @@ public class RegisterHandler implements HttpHandler {
 		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
 
 		ServerData serverData = new ServerData();
-		Encryption encryption = new Encryption();
+		HashPassword hash = new HashPassword();
 		SQLite sqlite = Main.sqlite;
 
-		String username = params.get("user").toLowerCase(), email = params.get("email"), password = encryption.encrypt(params.get("pass"));
+		String username = params.get("user").toLowerCase(), email = params.get("email"), password = hash.hashPassword(params.get("pass"));
 
 		if (!sqlite.isRegistered(username)) {
 			sqlite.registerUser(username, email, password, Main.configLoader.getString("defaultYear"));

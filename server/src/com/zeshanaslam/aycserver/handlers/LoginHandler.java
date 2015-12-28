@@ -10,7 +10,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.zeshanaslam.aycserver.Main;
 import com.zeshanaslam.aycserver.objects.LoginObject;
-import com.zeshanaslam.aycserver.utils.Encryption;
+import com.zeshanaslam.aycserver.utils.HashPassword;
 import com.zeshanaslam.aycserver.utils.SQLite;
 import com.zeshanaslam.aycserver.utils.ServerData;
 
@@ -21,7 +21,7 @@ public class LoginHandler implements HttpHandler {
 		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
 
 		ServerData serverData = new ServerData();
-		Encryption encryption = new Encryption();
+		HashPassword hash = new HashPassword();
 		SQLite sqlite = Main.sqlite;
 		String username = params.get("user").toLowerCase(), password = params.get("pass");
 
@@ -32,7 +32,7 @@ public class LoginHandler implements HttpHandler {
 			return;
 		}
 		
-		if (encryption.checkPassword(loginObject.password, password)) {
+		if (hash.checkPassword(password, loginObject.password)) {
 			JSONArray jsonArray = new JSONArray();
 			JSONObject jsonObject = new JSONObject();
 			

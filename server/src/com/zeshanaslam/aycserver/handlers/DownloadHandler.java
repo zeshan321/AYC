@@ -10,7 +10,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.zeshanaslam.aycserver.Main;
 import com.zeshanaslam.aycserver.objects.LoginObject;
-import com.zeshanaslam.aycserver.utils.Encryption;
+import com.zeshanaslam.aycserver.utils.HashPassword;
 import com.zeshanaslam.aycserver.utils.SQLite;
 import com.zeshanaslam.aycserver.utils.ServerData;
 
@@ -21,14 +21,14 @@ public class DownloadHandler implements HttpHandler {
 		Map<String, String> params = new ServerData().queryToMap(httpExchange.getRequestURI().getQuery()); 
 
 		ServerData serverData = new ServerData();
-		Encryption encryption = new Encryption();
+		HashPassword hash = new HashPassword();
 		SQLite sqlite = Main.sqlite;
 		
 		String username = params.get("user").toLowerCase(), password = params.get("pass"), ID = params.get("ID");
 
 		LoginObject loginObject = sqlite.getLoginData(username);
 		
-		if (encryption.checkPassword(password, loginObject.password)) {
+		if (hash.checkPassword(password, loginObject.password)) {
 			List<String> yearsList = Arrays.asList(loginObject.videos.split(", "));
 			
 			if (loginObject.admin || yearsList.contains(sqlite.getVideoByID(Integer.parseInt(ID)))) {
