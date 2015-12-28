@@ -19,10 +19,11 @@ public class RegisterHandler implements HttpHandler {
 		ServerData serverData = new ServerData();
 		Encryption encryption = new Encryption();
 		SQLite sqlite = Main.sqlite;
-		String username = params.get("user").toLowerCase(), password = encryption.encrypt(params.get("pass"));
+
+		String username = params.get("user").toLowerCase(), email = params.get("email"), password = encryption.encrypt(params.get("pass"));
 
 		if (!sqlite.isRegistered(username)) {
-			sqlite.registerUser(username, password, Main.configLoader.getString("defaultYear"));
+			sqlite.registerUser(username, email, password, Main.configLoader.getString("defaultYear"));
 			serverData.writeResponse(httpExchange, serverData.returnData(true, null, "User successfully registered"));
 		} else {
 			serverData.writeResponse(httpExchange, serverData.returnData(false, "2", "Already registered"));

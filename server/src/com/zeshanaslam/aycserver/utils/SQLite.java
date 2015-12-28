@@ -53,17 +53,18 @@ public class SQLite {
 		return isRegistered;
 	}
 
-	public void registerUser(String username, String password, String videos) {
+	public void registerUser(String username, String email, String password, String videos) {
 		try {
 			String sql = "INSERT INTO Users"
-					+ "(Username, Password, Videos, Admin) VALUES"
-					+ "(?,?,?,?)";
+					+ "(Username, Email, Password, Videos, Admin) VALUES"
+					+ "(?,?,?,?,?)";
 
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, username);
-			preparedStatement.setString(2, password);
-			preparedStatement.setString(3, videos);
-			preparedStatement.setBoolean(4, false);
+			preparedStatement.setString(2, email);
+			preparedStatement.setString(3, password);
+			preparedStatement.setString(4, videos);
+			preparedStatement.setBoolean(5, false);
 
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
@@ -86,7 +87,7 @@ public class SQLite {
 			ResultSet rs = statement.executeQuery();
 
 			while(rs.next()) {
-				loginObject = new LoginObject(rs.getString("Password"), rs.getString("Videos"), rs.getBoolean("Admin"));
+				loginObject = new LoginObject(rs.getString("Email"), rs.getString("Password"), rs.getString("Videos"), rs.getBoolean("Admin"));
 			}
 
 			rs.close();
@@ -476,6 +477,7 @@ public class SQLite {
 			sql = "CREATE TABLE IF NOT EXISTS Users " +
 					"(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
 					"Username TEXT NOT NULL, " + 
+					"Email TEXT NOT NULL, " + 
 					" Password TEXT NOT NULL, " +
 					" Videos TEXT NOT NULL, " +
 					" Admin BOOLEAN NOT NULL)"; 

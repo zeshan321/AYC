@@ -32,7 +32,7 @@ public class LoginHandler implements HttpHandler {
 			return;
 		}
 		
-		if (encryption.checkPassword(password, loginObject.password)) {
+		if (encryption.checkPassword(loginObject.password, password)) {
 			JSONArray jsonArray = new JSONArray();
 			JSONObject jsonObject = new JSONObject();
 			
