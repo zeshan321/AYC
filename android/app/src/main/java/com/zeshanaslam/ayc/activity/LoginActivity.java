@@ -1,5 +1,6 @@
 package com.zeshanaslam.ayc.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,10 +13,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.zeshanaslam.ayc.MainActivity;
 import com.zeshanaslam.ayc.R;
-import com.zeshanaslam.ayc.SignupActivity;
-import com.zeshanaslam.ayc.Utils.CallBack;
-import com.zeshanaslam.ayc.Utils.HTTPSManager;
+import com.zeshanaslam.ayc.database.UserDB;
+import com.zeshanaslam.ayc.utils.CallBack;
+import com.zeshanaslam.ayc.utils.HTTPSManager;
+import com.zeshanaslam.ayc.utils.LoginHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +56,9 @@ public class LoginActivity extends AppCompatActivity {
     @BindString(R.string.login_error)
     String _loginError;
 
+    // Dialogs
+    ProgressDialog progressDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent_next = new Intent(LoginActivity.this, SignupActivity.class);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
                 startActivity(intent_next);
                 finish();
             }
@@ -91,15 +97,25 @@ public class LoginActivity extends AppCompatActivity {
 
         _loginButton.setEnabled(false);
 
-        String username = _usernameText.getText().toString();
-        String password = _passwordText.getText().toString();
+        progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+
+        final String username = _usernameText.getText().toString();
+        final String password = _passwordText.getText().toString();
+        final UserDB userDB = new UserDB(this);
 
         HTTPSManager httpsManager = new HTTPSManager();
         httpsManager.runConnection(_serverURL + "/login?user=" + username + "&pass=" + password, new CallBack() {
 
             @Override
             public void onRequestComplete(String response) {
-                if (loginCheck(response)) {
+                LoginHandler loginHandler = new LoginHandler(response);
+
+                if (loginHandler.loginCheck()) {
+                    userDB.addUser(username, password, loginHandler.getVideos());
+
                     onLoginSuccess();
                 } else {
                     onLoginFailed();
@@ -113,26 +129,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private boolean loginCheck(String JSON) {
-        boolean login = true;
-
-        try {
-            JSONObject jsonObject = new JSONObject(JSON);
-
-            login = jsonObject.getBoolean("succeed");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return login;
-    }
-
     private void onLoginSuccess() {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+                progressDialog.hide();
                 _loginButton.setEnabled(true);
 
+                Intent intent_next = new Intent(LoginActivity.this, MainActivity.class);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+                startActivity(intent_next);
                 finish();
             }
         });
@@ -142,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+                progressDialog.hide();
                 Toast.makeText(getBaseContext(), _invalidLogin, Toast.LENGTH_LONG).show();
 
                 _loginButton.setEnabled(true);
@@ -153,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+                progressDialog.hide();
                 Toast.makeText(getBaseContext(), _loginError, Toast.LENGTH_LONG).show();
 
                 _loginButton.setEnabled(true);

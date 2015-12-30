@@ -1,4 +1,4 @@
-package com.zeshanaslam.ayc.Utils;
+package com.zeshanaslam.ayc.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -55,6 +55,7 @@ public class HTTPSManager {
 
                     callBack.onRequestComplete(stringBuilder.toString());
                 } catch (Exception e) {
+                    e.printStackTrace();
                     callBack.onRequestFailed();
                 }
             }

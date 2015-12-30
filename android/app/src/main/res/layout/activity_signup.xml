@@ -24,44 +24,56 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
         <!-- Name Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/signup_username"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/signup_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:hint="@string/prompt_user" />
+                android:hint="@string/prompt_user"
+                android:inputType="textVisiblePassword|textNoSuggestions" />
         </android.support.design.widget.TextInputLayout>
 
         <!--  Email Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/signup_email"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/signup_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="@string/prompt_email" />
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/signup_password"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/signup_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="@string/prompt_password"/>
+                android:hint="@string/prompt_password"
+                android:inputType="textPassword" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Signup Button -->
@@ -70,12 +82,12 @@
             android:id="@+id/signup_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            android:padding="12dp"
+            android:layout_marginTop="24dp"
             android:background="@color/primary_darker"
-            android:textColor="@color/white"
-            android:text="@string/action_sign_up"/>
+            android:padding="12dp"
+            android:text="@string/action_sign_up"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <!-- author info -->

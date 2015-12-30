@@ -1,6 +1,6 @@
-package com.zeshanaslam.ayc.Utils;
+package com.zeshanaslam.ayc.utils;
 
-import javax.net.ssl.HostnameVerifier ;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 public class NullHostNameVerifier implements HostnameVerifier {

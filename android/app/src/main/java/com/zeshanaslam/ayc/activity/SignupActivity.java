@@ -1,5 +1,6 @@
-package com.zeshanaslam.ayc;
+package com.zeshanaslam.ayc.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,9 +13,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zeshanaslam.ayc.Utils.CallBack;
-import com.zeshanaslam.ayc.Utils.HTTPSManager;
-import com.zeshanaslam.ayc.activity.LoginActivity;
+import com.zeshanaslam.ayc.MainActivity;
+import com.zeshanaslam.ayc.R;
+import com.zeshanaslam.ayc.database.UserDB;
+import com.zeshanaslam.ayc.utils.CallBack;
+import com.zeshanaslam.ayc.utils.HTTPSManager;
+import com.zeshanaslam.ayc.utils.LoginHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +59,9 @@ public class SignupActivity extends AppCompatActivity {
     @BindString(R.string.signup_error)
     String _signupError;
 
+    // Dialogs
+    ProgressDialog progressDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +87,6 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent_next = new Intent(SignupActivity.this, LoginActivity.class);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
                 startActivity(intent_next);
                 finish();
             }
@@ -95,17 +101,23 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        String username = _usernameText.getText().toString();
+        progressDialog = new ProgressDialog(SignupActivity.this, R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+
+        final String username = _usernameText.getText().toString();
+        final String password = _passwordText.getText().toString();
         String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
 
         HTTPSManager httpsManager = new HTTPSManager();
         httpsManager.runConnection(_serverURL + "/register?user=" + username + "&pass=" + password + "&email=" + email, new CallBack() {
 
             @Override
             public void onRequestComplete(String response) {
+
                 if (signupCheck(response)) {
-                    onSignupSuccess();
+                    onSignupSuccess(username, password);
                 } else {
                     onSignupFailed();
                 }
@@ -132,13 +144,41 @@ public class SignupActivity extends AppCompatActivity {
         return login;
     }
 
-    private void onSignupSuccess() {
+    private void onSignupSuccess(final String username, final String password) {
+        final UserDB userDB = new UserDB(this);
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                _signupButton.setEnabled(true);
+                progressDialog.setMessage("Signing in...");
+            }
+        });
 
-                finish();
+        HTTPSManager httpsManager = new HTTPSManager();
+        httpsManager.runConnection(_serverURL + "/login?user=" + username + "&pass=" + password, new CallBack() {
+
+            @Override
+            public void onRequestComplete(String response) {
+                LoginHandler loginHandler = new LoginHandler(response);
+
+                userDB.addUser(username, password, loginHandler.getVideos());
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.hide();
+
+                        Intent intent_next = new Intent(SignupActivity.this, MainActivity.class);
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+                        startActivity(intent_next);
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onRequestFailed() {
+                onSignupError();
             }
         });
     }
@@ -147,6 +187,7 @@ public class SignupActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+                progressDialog.hide();
                 Toast.makeText(getBaseContext(), _alreadyRegistered, Toast.LENGTH_LONG).show();
 
                 _signupButton.setEnabled(true);
@@ -158,6 +199,7 @@ public class SignupActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+                progressDialog.hide();
                 Toast.makeText(getBaseContext(), _signupError, Toast.LENGTH_LONG).show();
 
                 _signupButton.setEnabled(true);
