@@ -1,6 +1,7 @@
 package com.zeshanaslam.ayc.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,14 +59,23 @@ public class SignupActivity extends AppCompatActivity {
     String _alreadyRegistered;
     @BindString(R.string.signup_error)
     String _signupError;
+    @BindString(R.string.registering)
+    String _dialogReg;
+    @BindString(R.string.auth)
+    String _dialogAuth;
+    @BindString(R.string.load_data)
+    String _dialogData;
 
-    // Dialogs
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        // Set context
+        this.context = this;
 
         // UI
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -94,6 +104,8 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void signup() {
+        progressDialog = new ProgressDialog(SignupActivity.this, R.style.AppTheme_Dark_Dialog);
+
         if (!validateInput()) {
             onSignupFailed();
             return;
@@ -101,9 +113,8 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        progressDialog = new ProgressDialog(SignupActivity.this, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
+        progressDialog.setMessage(_dialogReg);
         progressDialog.show();
 
         final String username = _usernameText.getText().toString();
@@ -150,7 +161,7 @@ public class SignupActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                progressDialog.setMessage("Signing in...");
+                progressDialog.setMessage(_dialogAuth);
             }
         });
 
@@ -159,21 +170,18 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void onRequestComplete(String response) {
-                LoginHandler loginHandler = new LoginHandler(response);
+                final LoginHandler loginHandler = new LoginHandler(response, context);
 
                 userDB.addUser(username, password, loginHandler.getVideos());
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.hide();
-
-                        Intent intent_next = new Intent(SignupActivity.this, MainActivity.class);
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-                        startActivity(intent_next);
-                        finish();
+                        progressDialog.setMessage(_dialogData);
                     }
                 });
+
+                loginHandler.loadYears(_serverURL);
             }
 
             @Override

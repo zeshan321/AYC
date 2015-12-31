@@ -1,6 +1,7 @@
 package com.zeshanaslam.ayc.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,14 +56,21 @@ public class LoginActivity extends AppCompatActivity {
     String _invalidLogin;
     @BindString(R.string.login_error)
     String _loginError;
+    @BindString(R.string.auth)
+    String _dialogAuth;
+    @BindString(R.string.load_data)
+    String _dialogData;
 
-    // Dialogs
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Set context
+        this.context = this;
 
         // UI
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -90,6 +98,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+        progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
+
         if (!validateInput()) {
             onLoginFailed();
             return;
@@ -97,9 +107,8 @@ public class LoginActivity extends AppCompatActivity {
 
         _loginButton.setEnabled(false);
 
-        progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
+        progressDialog.setMessage(_dialogAuth);
         progressDialog.show();
 
         final String username = _usernameText.getText().toString();
@@ -111,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onRequestComplete(String response) {
-                LoginHandler loginHandler = new LoginHandler(response);
+                LoginHandler loginHandler = new LoginHandler(response, context);
 
                 if (loginHandler.loginCheck()) {
                     userDB.addUser(username, password, loginHandler.getVideos());
@@ -130,18 +139,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onLoginSuccess() {
+        final LoginHandler loginHandler = new LoginHandler(null, context);
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                progressDialog.hide();
-                _loginButton.setEnabled(true);
-
-                Intent intent_next = new Intent(LoginActivity.this, MainActivity.class);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-                startActivity(intent_next);
-                finish();
+                progressDialog.setMessage(_dialogData);
             }
         });
+
+        loginHandler.loadYears(_serverURL);
     }
 
     private void onLoginFailed() {

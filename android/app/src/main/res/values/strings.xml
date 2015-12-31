@@ -24,4 +24,10 @@
     <!-- Sign up errors -->
     <string name="already_registered">Someone already has that username.</string>
     <string name="signup_error">Unable to signup. Please try again later.</string>
+
+    <!-- Dialog messages login/sign up -->
+    <string name="registering">Registering…</string>
+    <string name="auth">Authenticating…</string>
+    <string name="load_data">Loading data…</string>
+
 </resources>

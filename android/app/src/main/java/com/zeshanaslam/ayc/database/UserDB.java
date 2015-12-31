@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class UserDB extends SQLiteOpenHelper {
 
     public UserDB(Context context) {
@@ -15,11 +18,11 @@ public class UserDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE User ("
+        String userTable = "CREATE TABLE User ("
                 + "ID INTEGER PRIMARY KEY   AUTOINCREMENT," + "Username TEXT," + "Password TEXT,"
                 + "Videos TEXT" + ")";
 
-        db.execSQL(CREATE_CONTACTS_TABLE);
+        db.execSQL(userTable);
     }
 
     @Override
@@ -85,8 +88,8 @@ public class UserDB extends SQLiteOpenHelper {
         return username;
     }
 
-    public String getVideos() {
-        String videos = null;
+    public List<String> getVideos() {
+        List<String> videos = null;
 
         try {
             String SQL = "SELECT * FROM User";
@@ -96,7 +99,7 @@ public class UserDB extends SQLiteOpenHelper {
 
             if (cursor != null && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    videos = cursor.getString(cursor.getColumnIndex("Videos"));
+                    videos = Arrays.asList(cursor.getString(cursor.getColumnIndex("Videos")).split(", "));
 
                     cursor.moveToNext();
                 }

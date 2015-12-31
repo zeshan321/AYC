@@ -4,8 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView"
+    <ListView
+        android:id="@+id/lv_year"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:divider="@null"
+        android:clipToPadding="false">
+    </ListView>
+
 </LinearLayout>
