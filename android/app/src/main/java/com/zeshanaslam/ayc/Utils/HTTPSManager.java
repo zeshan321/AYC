@@ -13,7 +13,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class HTTPSManager {
 
-    public void runConnection(final String inputURL, final CallBack callBack) {
+    public void runConnection(final String inputURL, final HTTPSCallBack callBack) {
         // Add check for connection and see if user is on data or wifi
 
         new Thread() {

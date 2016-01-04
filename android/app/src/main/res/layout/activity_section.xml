@@ -24,7 +24,7 @@
         android:layout_height="match_parent">
 
         <ListView
-            android:id="@+id/lv_year"
+            android:id="@+id/lv_section"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"></ListView>

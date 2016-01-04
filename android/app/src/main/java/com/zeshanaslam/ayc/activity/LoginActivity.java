@@ -15,15 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.zeshanaslam.ayc.MainActivity;
 import com.zeshanaslam.ayc.R;
 import com.zeshanaslam.ayc.database.UserDB;
-import com.zeshanaslam.ayc.utils.CallBack;
+import com.zeshanaslam.ayc.utils.HTTPSCallBack;
 import com.zeshanaslam.ayc.utils.HTTPSManager;
 import com.zeshanaslam.ayc.utils.LoginHandler;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -116,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         final UserDB userDB = new UserDB(this);
 
         HTTPSManager httpsManager = new HTTPSManager();
-        httpsManager.runConnection(_serverURL + "/login?user=" + username + "&pass=" + password, new CallBack() {
+        httpsManager.runConnection(_serverURL + "/login?user=" + username + "&pass=" + password, new HTTPSCallBack() {
 
             @Override
             public void onRequestComplete(String response) {

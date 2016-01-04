@@ -59,7 +59,7 @@ public class LoginHandler {
         final CacheDB cacheDB = new CacheDB(context);
 
         HTTPSManager httpsManager = new HTTPSManager();
-        httpsManager.runConnection(URL + "/year", new CallBack() {
+        httpsManager.runConnection(URL + "/year", new HTTPSCallBack() {
 
             @Override
             public void onRequestComplete(String response) {
@@ -68,7 +68,6 @@ public class LoginHandler {
                     JSONArray jsonArray = jsonObject.getJSONArray("info");
 
                     for (int n = 0; n < jsonArray.length(); n++) {
-                        System.out.println(jsonArray.getString(n));
                         cacheDB.addYear(jsonArray.getString(n));
                     }
                 } catch (JSONException e) {

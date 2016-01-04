@@ -144,7 +144,7 @@ function deleteVideo($ID) {
 	httpGet($serverURL . "/delete?key=" . $editKey . "&type=" . "video" . "&ID=" . $ID);
 }
 
-function deleteYear($type, $year) {
+function deleteYear($year) {
 	global $serverURL;
 	global $editKey;
 	

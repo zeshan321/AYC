@@ -14,10 +14,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zeshanaslam.ayc.MainActivity;
 import com.zeshanaslam.ayc.R;
 import com.zeshanaslam.ayc.database.UserDB;
-import com.zeshanaslam.ayc.utils.CallBack;
+import com.zeshanaslam.ayc.utils.HTTPSCallBack;
 import com.zeshanaslam.ayc.utils.HTTPSManager;
 import com.zeshanaslam.ayc.utils.LoginHandler;
 
@@ -122,7 +121,7 @@ public class SignupActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
 
         HTTPSManager httpsManager = new HTTPSManager();
-        httpsManager.runConnection(_serverURL + "/register?user=" + username + "&pass=" + password + "&email=" + email, new CallBack() {
+        httpsManager.runConnection(_serverURL + "/register?user=" + username + "&pass=" + password + "&email=" + email, new HTTPSCallBack() {
 
             @Override
             public void onRequestComplete(String response) {
@@ -166,7 +165,7 @@ public class SignupActivity extends AppCompatActivity {
         });
 
         HTTPSManager httpsManager = new HTTPSManager();
-        httpsManager.runConnection(_serverURL + "/login?user=" + username + "&pass=" + password, new CallBack() {
+        httpsManager.runConnection(_serverURL + "/login?user=" + username + "&pass=" + password, new HTTPSCallBack() {
 
             @Override
             public void onRequestComplete(String response) {
