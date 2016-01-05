@@ -13,24 +13,23 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.zeshanaslam.ayc.MainActivity;
 import com.zeshanaslam.ayc.R;
 import com.zeshanaslam.ayc.database.CacheDB;
-import com.zeshanaslam.ayc.listviews.section.SectionArrayAdapter;
-import com.zeshanaslam.ayc.listviews.section.SectionObject;
+import com.zeshanaslam.ayc.listviews.video.VideoArrayAdapter;
+import com.zeshanaslam.ayc.listviews.video.VideoObject;
 import com.zeshanaslam.ayc.updater.UpdateCallBack;
 import com.zeshanaslam.ayc.updater.Updater;
-import com.zeshanaslam.ayc.utils.SettingsManager;
 
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 
-public class SectionActivity extends AppCompatActivity {
+public class VideoActivity extends AppCompatActivity {
 
     private Context context;
     private CacheDB cacheDB;
     private String year;
+    private String section;
 
     // Views
     @Bind(R.id.swipeContainer)
@@ -39,7 +38,7 @@ public class SectionActivity extends AppCompatActivity {
     RelativeLayout _progressLayout;
     @Bind(R.id.loading_bar)
     ProgressBar _progressBar;
-    @Bind(R.id.lv_section)
+    @Bind(R.id.lv_video)
     ListView _listView;
     @BindString(R.string.server_url)
     String _serverURL;
@@ -47,7 +46,7 @@ public class SectionActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_section);
+        setContentView(R.layout.activity_video);
 
         this.context = this;
 
@@ -59,6 +58,7 @@ public class SectionActivity extends AppCompatActivity {
         Bundle bundleExtras = getIntent().getExtras();
         if (bundleExtras != null) {
             year = bundleExtras.getString("year");
+            section = bundleExtras.getString("section");
         }
 
         // Bind views
@@ -69,15 +69,15 @@ public class SectionActivity extends AppCompatActivity {
 
         // Setup listview data
         _progressLayout.setVisibility(View.VISIBLE);
-        if (!cacheDB.isSectionEmpty()) {
+        if (!cacheDB.isVideoEmpty()) {
             setupListView();
         }
 
         // Auto update
-        new Updater(this, _serverURL).updateSections(year, new UpdateCallBack() {
+        new Updater(this, _serverURL).updateVideos(year, section, new UpdateCallBack() {
             @Override
             public void onUpdateComplete(UpdateType updateType) {
-                if (updateType == UpdateType.Sections) {
+                if (updateType == UpdateType.Videos) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -93,10 +93,9 @@ public class SectionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                SettingsManager settingsManager = new SettingsManager(this);
-                settingsManager.remove("lastYear");
+                Intent intent_next = new Intent(this, SectionActivity.class);
+                intent_next.putExtra("year", year);
 
-                Intent intent_next = new Intent(this, MainActivity.class);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
                 startActivity(intent_next);
                 finish();
@@ -109,30 +108,33 @@ public class SectionActivity extends AppCompatActivity {
     }
 
     private void setupListView() {
-        final SectionArrayAdapter sectionArrayAdapter = new SectionArrayAdapter(this, R.layout.listview_single);
+        final VideoArrayAdapter videoArrayAdapter = new VideoArrayAdapter(this, R.layout.listview_single);
 
         // Clear listview
         _listView.setAdapter(null);
 
         // Add sections
-        for (SectionObject sectionObject: cacheDB.getSections()) {
-            sectionArrayAdapter.add(sectionObject);
+        for (VideoObject videoObject : cacheDB.getVideos(year, section)) {
+            videoArrayAdapter.add(videoObject);
         }
 
         _progressLayout.setVisibility(View.GONE);
-        _listView.setAdapter(sectionArrayAdapter);
+        _listView.setAdapter(videoArrayAdapter);
 
         // Listen for clicks
         _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-                SectionObject sectionObject = sectionArrayAdapter.getItem(position);
+                VideoObject videoObject = videoArrayAdapter.getItem(position);
 
                 Activity activity = ((Activity) context);
-                Intent intent_next = new Intent(context, VideoActivity.class);
-                intent_next.putExtra("year", sectionObject.year);
-                intent_next.putExtra("section", sectionObject.name);
+                Intent intent_next = new Intent(context, VideoPlayerActivity.class);
+                intent_next.putExtra("ID", videoObject.ID);
+                intent_next.putExtra("year", year);
+                intent_next.putExtra("section", section);
+                intent_next.putExtra("name", videoObject.name);
+                intent_next.putExtra("desc", videoObject.desc);
 
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
                 activity.startActivity(intent_next);

@@ -1,4 +1,4 @@
-package com.zeshanaslam.ayc.listviews.year;
+package com.zeshanaslam.ayc.listviews.video;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,16 +12,16 @@ import com.zeshanaslam.ayc.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YearArrayAdapter extends ArrayAdapter<YearObject> {
+public class VideoArrayAdapter extends ArrayAdapter<VideoObject> {
 
-    private List<YearObject> list = new ArrayList<>();
+    private List<VideoObject> list = new ArrayList<>();
 
-    public YearArrayAdapter(Context context, int resource) {
+    public VideoArrayAdapter(Context context, int resource) {
         super(context, resource);
     }
 
     @Override
-    public void add(YearObject object) {
+    public void add(VideoObject object) {
         list.add(object);
 
         super.add(object);
@@ -34,7 +34,7 @@ public class YearArrayAdapter extends ArrayAdapter<YearObject> {
         super.clear();
     }
 
-    public void remove(YearObject object) {
+    public void remove(VideoObject object) {
         list.remove(object);
     }
 
@@ -47,13 +47,13 @@ public class YearArrayAdapter extends ArrayAdapter<YearObject> {
     }
 
     public View getView(int position, View row, ViewGroup parent) {
-        YearObject yearObject = getItem(position);
+        VideoObject videoObject = getItem(position);
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         row = inflater.inflate(R.layout.listview_single, parent, false);
 
         TextView textView = (TextView) row.findViewById(R.id.tv_name);
-        textView.setText(yearObject.year);
+        textView.setText(videoObject.name);
 
         return row;
     }

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SectionArrayAdapter extends ArrayAdapter<SectionObject> {
 
-    private List<SectionObject> sectionList = new ArrayList<SectionObject>();
+    private List<SectionObject> list = new ArrayList<>();
 
     public SectionArrayAdapter(Context context, int resource) {
         super(context, resource);
@@ -22,28 +22,28 @@ public class SectionArrayAdapter extends ArrayAdapter<SectionObject> {
 
     @Override
     public void add(SectionObject object) {
-        sectionList.add(object);
+        list.add(object);
 
         super.add(object);
     }
 
     @Override
     public void clear() {
-        this.sectionList.clear();
+        this.list.clear();
 
         super.clear();
     }
 
     public void remove(SectionObject object) {
-        sectionList.remove(object);
+        list.remove(object);
     }
 
     public void remove(int i) {
-        sectionList.remove(i);
+        list.remove(i);
     }
 
     public int getCount() {
-        return this.sectionList.size();
+        return this.list.size();
     }
 
     public View getView(int position, View row, ViewGroup parent) {

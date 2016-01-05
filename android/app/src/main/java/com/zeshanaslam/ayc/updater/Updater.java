@@ -10,6 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class Updater {
 
     Context context;
@@ -46,6 +50,9 @@ public class Updater {
             }
 
             @Override
+            public void onRequestComplete(InputStream inputStream) {}
+
+            @Override
             public void onRequestFailed() {
 
             }
@@ -77,6 +84,45 @@ public class Updater {
 
                 callBack.onUpdateComplete(UpdateCallBack.UpdateType.Sections);
             }
+
+            @Override
+            public void onRequestComplete(InputStream inputStream) {}
+
+            @Override
+            public void onRequestFailed() {
+
+            }
+        });
+    }
+
+    public void updateVideos(final String year, final String section, final UpdateCallBack callBack) {
+        final CacheDB cacheDB = new CacheDB(context);
+
+        HTTPSManager httpsManager = new HTTPSManager();
+        httpsManager.runConnection(URL + "/videos?year=" + year + "&section=" + section.replace(" ", "%20"), new HTTPSCallBack() {
+
+            @Override
+            public void onRequestComplete(String response) {
+                // Clear previous videos
+                cacheDB.clearVideos();
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("info");
+
+                    for (int n = 0; n < jsonArray.length(); n++) {
+                        JSONObject jsonObject1 = new JSONObject(jsonArray.getString(n));
+                        cacheDB.addVideo(jsonObject1.get("ID").toString(), year, section.replace("%20", " "), jsonObject1.get("name").toString(), jsonObject1.get("desc").toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                callBack.onUpdateComplete(UpdateCallBack.UpdateType.Videos);
+            }
+
+            @Override
+            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {

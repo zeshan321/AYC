@@ -21,6 +21,8 @@ import com.zeshanaslam.ayc.utils.HTTPSCallBack;
 import com.zeshanaslam.ayc.utils.HTTPSManager;
 import com.zeshanaslam.ayc.utils.LoginHandler;
 
+import java.io.InputStream;
+
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.Bind;
@@ -126,6 +128,9 @@ public class LoginActivity extends AppCompatActivity {
                     onLoginFailed();
                 }
             }
+
+            @Override
+            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {

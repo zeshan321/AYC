@@ -88,6 +88,32 @@ public class UserDB extends SQLiteOpenHelper {
         return username;
     }
 
+    public String getPassword() {
+        String username = null;
+
+        try {
+            String SQL = "SELECT * FROM User";
+
+            SQLiteDatabase db = this.getWritableDatabase();
+            Cursor cursor = db.rawQuery(SQL, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    username = cursor.getString(cursor.getColumnIndex("Password"));
+
+                    cursor.moveToNext();
+                }
+            }
+
+            cursor.close();
+            db.close();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+
+        return username;
+    }
+
     public List<String> getVideos() {
         List<String> videos = null;
 

@@ -20,6 +20,8 @@
         <activity android:name=".activity.LoginActivity" android:theme="@style/AppTheme.Dark"/>
         <activity android:name=".activity.SignupActivity" android:theme="@style/AppTheme.Dark"/>
         <activity android:name=".activity.SectionActivity"/>
+        <activity android:name=".activity.VideoActivity"/>
+        <activity android:name=".activity.VideoPlayerActivity"/>
     </application>
 
 </manifest>

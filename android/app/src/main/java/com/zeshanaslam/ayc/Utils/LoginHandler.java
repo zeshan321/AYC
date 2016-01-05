@@ -12,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+
 public class LoginHandler {
 
     private String JSON;
@@ -83,9 +85,10 @@ public class LoginHandler {
             }
 
             @Override
-            public void onRequestFailed() {
+            public void onRequestComplete(InputStream inputStream) {}
 
-            }
+            @Override
+            public void onRequestFailed() {}
         });
     }
 }

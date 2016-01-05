@@ -23,6 +23,8 @@ import com.zeshanaslam.ayc.utils.LoginHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -134,6 +136,9 @@ public class SignupActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onRequestComplete(InputStream inputStream) {}
+
+            @Override
             public void onRequestFailed() {
                 onSignupError();
             }
@@ -182,6 +187,9 @@ public class SignupActivity extends AppCompatActivity {
 
                 loginHandler.loadYears(_serverURL);
             }
+
+            @Override
+            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {
