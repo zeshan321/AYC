@@ -14,18 +14,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.zeshanaslam.ayc.R;
 import com.zeshanaslam.ayc.database.UserDB;
-import com.zeshanaslam.ayc.utils.HTTPSCallBack;
-import com.zeshanaslam.ayc.utils.HTTPSManager;
+import com.zeshanaslam.ayc.requet.HTTPSCallBack;
+import com.zeshanaslam.ayc.requet.HTTPSManager;
 import com.zeshanaslam.ayc.utils.LoginHandler;
 
-import java.io.InputStream;
-
+import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
-import butterknife.Bind;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -128,9 +125,6 @@ public class LoginActivity extends AppCompatActivity {
                     onLoginFailed();
                 }
             }
-
-            @Override
-            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {

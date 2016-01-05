@@ -16,14 +16,12 @@ import android.widget.Toast;
 
 import com.zeshanaslam.ayc.R;
 import com.zeshanaslam.ayc.database.UserDB;
-import com.zeshanaslam.ayc.utils.HTTPSCallBack;
-import com.zeshanaslam.ayc.utils.HTTPSManager;
+import com.zeshanaslam.ayc.requet.HTTPSCallBack;
+import com.zeshanaslam.ayc.requet.HTTPSManager;
 import com.zeshanaslam.ayc.utils.LoginHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.InputStream;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -136,9 +134,6 @@ public class SignupActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRequestComplete(InputStream inputStream) {}
-
-            @Override
             public void onRequestFailed() {
                 onSignupError();
             }
@@ -187,9 +182,6 @@ public class SignupActivity extends AppCompatActivity {
 
                 loginHandler.loadYears(_serverURL);
             }
-
-            @Override
-            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {

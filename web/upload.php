@@ -11,7 +11,7 @@ if (isset($_POST['videoinputsection']) && isset($_POST['videoinputtitle']) && is
 	global $uploadDir;
     $video = createVideo($_POST['videoinputtitle'], $_POST['videoinputdesc'], "0", $_POST['videoinputsection'], $_POST['selectedyearvideo']);
 	
-	if (!empty($_FILES['videoinputfile']) && $_FILES['videoinputfile']['name'] != "") {
+	if (empty($_FILES['videoinputfile']) && $_FILES['videoinputfile']['name'] != "") {
 		foreach ($video as $value) {
 			$fileExt = end((explode(".", $_FILES["videoinputfile"]["name"])));
 			$fileName = $value["ID"] . "." . $fileExt;
@@ -28,7 +28,8 @@ if (isset($_POST['updatevideoinputtitle']) && isset($_POST['updatevideoinputdesc
 	global $uploadDir;
     updateVideo($_POST['updatevideoinputtitle'], $_POST['updatevideoinputdesc'], "0", $_POST['updatevideosection'], $_POST['updatevideoyear'], $_POST['updatevideoid']);
 	
-	if (!empty($_FILES['videoinputfile']) && $_FILES['updatevideoinputfile']['name'] != "") {
+	if (empty($_FILES['videoinputfile']) && $_FILES['updatevideoinputfile']['name'] != "") {
+		echo "test1";
 		$fileExt = end((explode(".", $_FILES["updatevideoinputfile"]["name"])));
 		$fileName = $_POST['updatevideoid'] . "." . $fileExt;
 		move_uploaded_file($_FILES["updatevideoinputfile"]["tmp_name"], $uploadDir . $fileName);

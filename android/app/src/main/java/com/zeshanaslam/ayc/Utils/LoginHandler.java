@@ -7,12 +7,12 @@ import android.content.Intent;
 import com.zeshanaslam.ayc.MainActivity;
 import com.zeshanaslam.ayc.R;
 import com.zeshanaslam.ayc.database.CacheDB;
+import com.zeshanaslam.ayc.requet.HTTPSCallBack;
+import com.zeshanaslam.ayc.requet.HTTPSManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.InputStream;
 
 public class LoginHandler {
 
@@ -85,10 +85,8 @@ public class LoginHandler {
             }
 
             @Override
-            public void onRequestComplete(InputStream inputStream) {}
-
-            @Override
-            public void onRequestFailed() {}
+            public void onRequestFailed() {
+            }
         });
     }
 }

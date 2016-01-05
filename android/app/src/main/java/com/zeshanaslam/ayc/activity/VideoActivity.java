@@ -59,6 +59,9 @@ public class VideoActivity extends AppCompatActivity {
         if (bundleExtras != null) {
             year = bundleExtras.getString("year");
             section = bundleExtras.getString("section");
+
+            // Set action bar to section
+            getSupportActionBar().setTitle(section);
         }
 
         // Bind views
@@ -76,15 +79,33 @@ public class VideoActivity extends AppCompatActivity {
         // Auto update
         new Updater(this, _serverURL).updateVideos(year, section, new UpdateCallBack() {
             @Override
-            public void onUpdateComplete(UpdateType updateType) {
-                if (updateType == UpdateType.Videos) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setupListView();
-                        }
-                    });
-                }
+            public void onUpdateComplete() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupListView();
+                    }
+                });
+            }
+        });
+
+        // Swipe down refresh
+        _swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Updater(context, _serverURL).updateVideos(year, section, new UpdateCallBack() {
+                    @Override
+                    public void onUpdateComplete() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setupListView();
+
+                                _swipeRefresh.setRefreshing(false);
+                            }
+                        });
+                    }
+                });
             }
         });
     }

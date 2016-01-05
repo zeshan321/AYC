@@ -2,27 +2,22 @@ package com.zeshanaslam.ayc.activity;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.MediaController;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
 import com.zeshanaslam.ayc.R;
 import com.zeshanaslam.ayc.database.CacheDB;
 import com.zeshanaslam.ayc.database.UserDB;
-import com.zeshanaslam.ayc.utils.HTTPSCallBack;
-import com.zeshanaslam.ayc.utils.HTTPSManager;
+import com.zeshanaslam.ayc.requet.DownloadCallBack;
+import com.zeshanaslam.ayc.requet.HTTPSDownload;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -41,12 +36,22 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private MediaController mediaController;
 
     // Views
-    @Bind(R.id.videoView)
+    @Bind(R.id.fragment_video_player)
     VideoView _videoView;
-    @Bind(R.id.videoDesc)
+    @Bind(R.id.fragment_video_title)
+    TextView _videoTitle;
+    @Bind(R.id.fragment_video_desc)
     TextView _videoDesc;
+    @Bind(R.id.fragment_video_download)
+    TextView _videoDownload;
+    @Bind(R.id.fragment_video_progress)
+    ProgressBar _videoProgress;
+
+    // Strings
     @BindString(R.string.server_url)
     String _serverURL;
+    @BindString(R.string.video_error)
+    String _videoError;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +75,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
             name = bundleExtras.getString("name");
             desc = bundleExtras.getString("desc");
 
+            _videoTitle.setText(name);
             _videoDesc.setText(desc);
+
+            // Set action bar to video title
+            getSupportActionBar().setTitle(name);
         }
 
         mediaController = new MediaController(this);
@@ -93,12 +102,29 @@ public class VideoPlayerActivity extends AppCompatActivity {
             }
         });
 
-        // Testing downloading
+        _videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                _videoProgress.setVisibility(View.GONE);
+                _videoDownload.setVisibility(View.VISIBLE);
+                _videoDownload.setText(_videoError);
+
+                // Delete corrupt file
+                new File(appPath + "/videos/" + ID + ".mp4").delete();
+                return true;
+            }
+        });
+
+        // Video downloader
         File videoFile = new File(appPath + "/videos/" + ID + ".mp4");
+
         if (videoFile.exists()) {
+            System.out.println("Video found");
             playVideo(appPath + "/videos/" + ID + ".mp4");
         } else {
-            System.out.println("VIDEO DOWNLOADING!");
+            _videoDownload.setVisibility(View.VISIBLE);
+            _videoProgress.setVisibility(View.VISIBLE);
             downloadVideo();
         }
     }
@@ -129,42 +155,50 @@ public class VideoPlayerActivity extends AppCompatActivity {
         new File(appPath + "/videos").mkdir();
 
         final File videoFile = new File(appPath + "/videos/" + ID + ".mp4");
+        if (videoFile.exists()) {
+            videoFile.delete();
+        }
 
-        HTTPSManager httpsManager = new HTTPSManager();
-        httpsManager.runConnectionDownload(_serverURL + "/download?user=" + userDB.getUsername() + "&pass=" + userDB.getPassword() + "&ID=1", new HTTPSCallBack() {
+        HTTPSDownload httpsDownload = new HTTPSDownload();
+        httpsDownload.runConnectionDownload(_serverURL + "/download?user=" + userDB.getUsername() + "&pass=" + userDB.getPassword() + "&ID=" + ID, videoFile, new DownloadCallBack() {
 
             @Override
-            public void onRequestComplete(InputStream inputStream) {
-                try {
-                    if (videoFile.exists()) {
-                        videoFile.delete();
-                    }
-
-                    byte[] byteArray = ByteStreams.toByteArray(inputStream);
-                    Files.write(byteArray, videoFile);
-
-                    playVideo(videoFile.getPath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void onRequestComplete() {
+                playVideo(videoFile.getPath());
             }
 
             @Override
-            public void onRequestComplete(String response) {}
+            public void onProgress(int progress) {
+                _videoProgress.setProgress(progress);
+            }
 
             @Override
             public void onRequestFailed() {
-                videoFile.delete();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        _videoProgress.setVisibility(View.GONE);
+                        _videoDownload.setVisibility(View.VISIBLE);
+                        _videoDownload.setText(_videoError);
+                    }
+                });
+
+                // Delete corrupt file
+                new File(appPath + "/videos/" + ID + ".mp4").delete();
             }
         });
     }
 
     private void playVideo(final String path) {
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                _videoDownload.setVisibility(View.GONE);
+                _videoProgress.setVisibility(View.GONE);
+
                 _videoView.setVideoPath(path);
-                _videoView.seekTo(2);
+                _videoView.start();
             }
         });
     }

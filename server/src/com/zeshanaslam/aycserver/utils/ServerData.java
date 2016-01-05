@@ -1,7 +1,10 @@
 package com.zeshanaslam.aycserver.utils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -34,13 +37,30 @@ public class ServerData {
 		try {
 			t.sendResponseHeaders(200, response.length());
 
+			
 			OutputStream os = t.getResponseBody();
-			os.write(Files.readAllBytes(response.toPath()));
-			os.flush();
-			os.close();
+			fileWriter(new FileInputStream(response), os);
 
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void fileWriter(InputStream fileInputStream, OutputStream outputStream) throws IOException {
+		try {
+		  byte[] buffer = new byte[1024];
+		  int bytesRead;
+
+		  while((bytesRead = fileInputStream.read(buffer)) !=-1) {
+		      outputStream.write(buffer, 0, bytesRead);
+		  }
+
+		  fileInputStream.close();
+		  outputStream.flush();
+		 } catch (IOException e) {
+		   e.printStackTrace();
+		 } finally {
+		   outputStream.close();
 		}
 	}
 

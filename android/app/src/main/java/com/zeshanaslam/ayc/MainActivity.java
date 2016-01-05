@@ -86,15 +86,13 @@ public class MainActivity extends AppCompatActivity {
         // Auto update
         new Updater(this, _serverURL).updateYears(new UpdateCallBack() {
             @Override
-            public void onUpdateComplete(UpdateType updateType) {
-                if (updateType == UpdateType.Years) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setupListView();
-                        }
-                    });
-                }
+            public void onUpdateComplete() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupListView();
+                    }
+                });
             }
         });
 
@@ -103,17 +101,15 @@ public class MainActivity extends AppCompatActivity {
             public void onRefresh() {
                 new Updater(context, _serverURL).updateYears(new UpdateCallBack() {
                     @Override
-                    public void onUpdateComplete(UpdateType updateType) {
-                        if (updateType == UpdateType.Years) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    setupListView();
+                    public void onUpdateComplete() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setupListView();
 
-                                    _swipeRefresh.setRefreshing(false);
-                                }
-                            });
-                        }
+                                _swipeRefresh.setRefreshing(false);
+                            }
+                        });
                     }
                 });
             }

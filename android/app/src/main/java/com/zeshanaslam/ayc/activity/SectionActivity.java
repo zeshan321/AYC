@@ -76,15 +76,33 @@ public class SectionActivity extends AppCompatActivity {
         // Auto update
         new Updater(this, _serverURL).updateSections(year, new UpdateCallBack() {
             @Override
-            public void onUpdateComplete(UpdateType updateType) {
-                if (updateType == UpdateType.Sections) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setupListView();
-                        }
-                    });
-                }
+            public void onUpdateComplete() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupListView();
+                    }
+                });
+            }
+        });
+
+        // Swipe down refresh
+        _swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Updater(context, _serverURL).updateYears(new UpdateCallBack() {
+                    @Override
+                    public void onUpdateComplete() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setupListView();
+
+                                _swipeRefresh.setRefreshing(false);
+                            }
+                        });
+                    }
+                });
             }
         });
     }
@@ -115,7 +133,7 @@ public class SectionActivity extends AppCompatActivity {
         _listView.setAdapter(null);
 
         // Add sections
-        for (SectionObject sectionObject: cacheDB.getSections()) {
+        for (SectionObject sectionObject : cacheDB.getSections()) {
             sectionArrayAdapter.add(sectionObject);
         }
 

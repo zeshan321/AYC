@@ -3,16 +3,12 @@ package com.zeshanaslam.ayc.updater;
 import android.content.Context;
 
 import com.zeshanaslam.ayc.database.CacheDB;
-import com.zeshanaslam.ayc.utils.HTTPSCallBack;
-import com.zeshanaslam.ayc.utils.HTTPSManager;
+import com.zeshanaslam.ayc.requet.HTTPSCallBack;
+import com.zeshanaslam.ayc.requet.HTTPSManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 public class Updater {
 
@@ -46,11 +42,8 @@ public class Updater {
                     e.printStackTrace();
                 }
 
-               callBack.onUpdateComplete(UpdateCallBack.UpdateType.Years);
+                callBack.onUpdateComplete();
             }
-
-            @Override
-            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {
@@ -77,16 +70,13 @@ public class Updater {
                     for (int n = 0; n < jsonArray.length(); n++) {
                         JSONObject jsonObject1 = new JSONObject(jsonArray.getString(n));
                         cacheDB.addSection(jsonObject1.get("ID").toString(), year, jsonObject1.get("name").toString());
-                }
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                callBack.onUpdateComplete(UpdateCallBack.UpdateType.Sections);
+                callBack.onUpdateComplete();
             }
-
-            @Override
-            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {
@@ -118,11 +108,8 @@ public class Updater {
                     e.printStackTrace();
                 }
 
-                callBack.onUpdateComplete(UpdateCallBack.UpdateType.Videos);
+                callBack.onUpdateComplete();
             }
-
-            @Override
-            public void onRequestComplete(InputStream inputStream) {}
 
             @Override
             public void onRequestFailed() {

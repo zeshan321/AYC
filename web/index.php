@@ -232,8 +232,8 @@ if (isset($_POST['updatesectionInput']) && isset($_POST['updatesectionold']) && 
 					<textarea rows="4" cols="50"type="text" class="form-control" name="videoinputdesc" id="videoinputdesc" value="" required></textarea>
 				  </div>
 				  <div class="form-group">
-					<label for="updatevideoinputfile">File</label>
-					<input type="file" name="updatevideoinputfile" id="updatevideoinputfile">
+					<label for="videoinputfile">File</label>
+					<input type="file" name="videoinputfile" id="videoinputfile">
 				  </div>
 
 			</div>
